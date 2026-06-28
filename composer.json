@@ -12,7 +12,6 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "livewire/livewire": "^2.11",
-        "munafio/chatify": "^1.6",
         "stripe/stripe-php": "^14.1"
     },
     "require-dev": {

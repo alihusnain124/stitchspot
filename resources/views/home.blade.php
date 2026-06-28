@@ -6,6 +6,5 @@
     <title>Document</title>
 </head>
 <body>
-    <a href="{{url('/chatify')}}"><button >chat</button></a>
 </body>
 </html>

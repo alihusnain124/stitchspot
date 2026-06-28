@@ -15,6 +15,19 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('zip_code')->nullable();
+            $table->string('mobile_no')->nullable();
+            $table->string('payment_method')->nullable();
+            $table->string('payment_status')->default('panding');
+            $table->string('order_status')->default('Panding');
+            $table->text('track_details')->nullable();
+            $table->string('added_on')->nullable();
             $table->timestamps();
         });
     }
