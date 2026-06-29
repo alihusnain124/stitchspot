@@ -269,12 +269,14 @@ public function stripe_pay_tailor(Request $req, $id, $user_id){
         return redirect('/admin/tailor_order')->with('msg', 'Order not found.');
     }
 
-    $price = $order->price;
+    $fullPrice  = $order->price;
+    $price      = round($fullPrice * 0.75, 2); // Admin pays 75% of the total
 
     $data = [
-        'id'      => $id,
-        'user_id' => $user_id,
-        'price'   => $price,
+        'id'        => $id,
+        'user_id'   => $user_id,
+        'price'     => $price,
+        'fullPrice' => $fullPrice,
     ];
 
     try {

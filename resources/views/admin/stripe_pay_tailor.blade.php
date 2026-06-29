@@ -216,8 +216,9 @@
           <div class="pay-summary-id">Order #{{ $id }} &nbsp;·&nbsp; Tailor #{{ $user_id }}</div>
         </div>
         <div class="pay-summary-amount">
-          <div class="label">Amount</div>
+          <div class="label">Tailor Payout (75%)</div>
           <div class="value"><span class="currency">PKR</span>{{ number_format($price, 0) }}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:4px;">Full order: PKR {{ number_format($fullPrice, 0) }}</div>
         </div>
       </div>
 
@@ -244,7 +245,7 @@
           <button class="pay-btn" type="submit" id="submit-button">
             <svg id="lock-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <div class="spinner" id="btn-spinner"></div>
-            <span id="btn-text">Pay PKR {{ number_format($price, 0) }}</span>
+            <span id="btn-text">Pay 75% — PKR {{ number_format($price, 0) }}</span>
           </button>
         </form>
 
@@ -305,7 +306,7 @@
         btn.disabled           = false;
         spinner.style.display  = 'none';
         lockIcon.style.display = 'block';
-        btnText.textContent    = 'Pay PKR {{ number_format($price, 0) }}';
+        btnText.textContent    = 'Pay 75% — PKR {{ number_format($price, 0) }}';
       } else if (result.paymentIntent.status === 'succeeded') {
         var inp = document.createElement('input');
         inp.type  = 'hidden';
