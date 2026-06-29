@@ -1,296 +1,80 @@
-<html lang="en">
+@extends('front.layout')
+@section('title', 'Search Services – StitchSpot')
 
-<head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta name="csrf-token" content="{{ csrf_token() }}">
-   <title>Search Services</title>
-   <link rel="stylesheet" href=" {{asset('front-assets/css/bootstrap.css')}}">
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-   <link rel="stylesheet" href="{{asset('front-assets/css/style.css')}}">
-   <link href="css/font-awesome.min.css" rel="stylesheet" />
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
- 
-</head>
+@section('content')
 
-<body>
+{{-- Page header --}}
+<div class="bg-[#F9F8F6] border-b border-gray-100 py-12 text-center">
+   <p class="font-body text-[10.5px] tracking-[4px] uppercase text-gray-400 mb-2">
+      <a href="{{ url('/') }}" class="hover:text-gold transition-colors">Home</a>
+      <span class="mx-2 text-gray-300">/</span>
+      <a href="{{ url('/services') }}" class="hover:text-gold transition-colors">Services</a>
+      <span class="mx-2 text-gray-300">/</span>
+      <span>Search Results</span>
+   </p>
+   <h1 class="font-display text-[clamp(28px,4vw,44px)] font-semibold text-[#1A1A1A]">Search Results</h1>
+</div>
 
+{{-- Search bar --}}
+<div class="max-w-[1280px] mx-auto px-4 lg:px-8 pt-12 pb-4">
+   <form action="{{ url('/search_service') }}" method="GET" class="flex gap-3 max-w-xl mx-auto">
+      <input type="text" name="search_val"
+         value="{{ request('search_val') }}"
+         placeholder="Search services…"
+         class="flex-1 h-11 px-4 font-body text-sm text-[#1A1A1A] placeholder-gray-400 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+      <button type="submit"
+         class="px-6 h-11 bg-[#1A1A1A] text-white font-body text-[11px] tracking-[0.18em] uppercase hover:bg-gray-800 transition-colors border-none cursor-pointer">
+         Search
+      </button>
+   </form>
+</div>
 
-   <div class="container-fluid bg-danger">
-      <div class="container">
-         <div class="header ">
-            <div class="logo">
-               <a href="{{url('/')}}">
-                  <h1 class="text-white">Stitch<span class="sp1">Spot</span></h1>
-               </a>
+{{-- Results --}}
+<section class="py-12 bg-white">
+   <div class="max-w-[1280px] mx-auto px-4 lg:px-8">
+
+      @if(isset($service) && count($service) > 0)
+      <p class="font-body text-[12px] text-gray-400 mb-8">{{ count($service) }} result(s) found</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+         @foreach($service as $item)
+         <a href="{{ url('/service-details/'.$item->id) }}"
+            class="group bg-white border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 block">
+
+            <div class="relative overflow-hidden bg-gray-100" style="aspect-ratio:4/3">
+               <img src="{{ asset('/storage/media/services/'.$item->image) }}"
+                    alt="{{ $item->title }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
             </div>
-            @if(session()->get('IS_TAILOR')=='yes')
-            <div class="search" style='visibility: hidden;'>
-               <form action="{{url('/search_service')}}" id='search_service'>
-             
-                   {{-- <i class="fa-solid fa-magnifying-glass"></i> --}}
-                  <input type="text" name="search_val" id="input" placeholder="Search Here">
-                
 
-               </form>
-            </div>
-            @else
-            <div class="search">
-            <form action="{{url('/search_service')}}" id='search_service'>
-               
-               {{-- <i class="fa-solid fa-magnifying-glass"></i> --}}
-               <input type="text" name="search_val" id="input" placeholder="Search Here">
-            
-
-            </form>
-            </div>
-            @endif
-            
-            @if(session()->get('IS_TAILOR')=='yes')
-            <div class="icons" >
-               <a style='display:none' href="{{url('/cart')}}"><i class="fa fa-cart-plus"><sup style='font-weight:lighter'>{{ total_cart_items()}}</sup></i></a>
-               <a   href="{{url('/profile')}}"><i class="fa fa-user"></i></a>
-               <a href="#" id="bar" onclick=toggleElement()><i class="fa fa-bars"></i></a>
-            </div>
-            
-            @else
-            <div class="icons">
-               <a href="{{url('/cart')}}"><i class="fa fa-cart-plus"><sup style='font-weight:lighter'>{{ total_cart_items()}}</sup></i></a>
-               <a href="{{url('/profile')}}"><i class="fa fa-user"></i></a>
-               <a href="#" id="bar" onclick=toggleElement()><i class="fa fa-bars"></i></a>
-            </div>
-            @endif
-         </div>
-         @if(session()->get('IS_TAILOR')=='yes')
-         <div class="links nav-items" id="nav-items-js">
-            <a href="{{url('/customers_dashboard')}}">Dashboard</a>
-            <!-- <a href="{{url('/profile')}}">My Account</a> -->
-               <a href="{{url('/services')}}">Our Services</a>
-            <a href="{{url('/contact')}}">Contact us</a>
-            @if(session()->has('FRONT_USER_LOGIN'))
-            <a href="{{url('logout')}}">Logout</a>
-            @else
-            <a href="{{url('login')}}">Login</a>
-            @endif
-         </div>
-         @else
-        
-         <div class="links nav-items" id="nav-items-js">
-            <a href="{{url('/')}}">Home</a>
-            <!-- <a href="{{url('/profile')}}">My Account</a> -->
-               <a href="{{url('/services')}}">Our Services</a>
-            <a href="{{url('/cart')}}">My Cart</a>
-            <a href="{{url('/contact')}}">Contact us</a>
-            @if(session()->has('FRONT_USER_LOGIN'))
-            <a href="{{url('logout')}}">Logout</a>
-            @else
-            <a href="{{url('login')}}">Login</a>
-            @endif
-         </div>
-         @endif
-
-      </div>
-   </div>
-
-
-   @if(session()->get('IS_TAILOR')=='yes')
-   <nav class="navbar navbar-expand-lg bg-dark " style='display:none'>
-      <div class="container ">
-
-         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-           {!!getTopNavCat()!!}
-         </div>
-      </div>
-   </nav>
-   @else
-   <nav class="navbar navbar-expand-lg bg-dark ">
-      <div class="container ">
-
-         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-           {!!getTopNavCat()!!}
-         </div>
-      </div>
-   </nav>
-
-   @endif
-
-
-
-
-    
-   <div class="container " style="height:11vh">
-    <div class="heading_container heading_center ">
-       <h2 class="mt-5 text-center">
-        Search <span>Results</span>
-       </h2>
-    </div>
-
- </div>
-
-    
-
-        <section id="product1" class="container mt-5 mb-5">
-            <!-- <h1 class="mt-5">Our Products</h1> -->
-            <div class="pro-container">
-               @if(isset($service[0]))
-                
-                @foreach ($service as $item)
-             
-                <div class="pro">
-            <img src="{{asset('/storage/media/services/'.$item->image)}}">
-            <div class="des">
-               <h5><a style='color:black' href="{{url('/service-details/'.$item->id)}}">{{ Str::substr($item->title, 0, 70) }}...</a></h5>
-               <span style='font-size:15px'>Started at:Rs {{$item->min_price}}/-</span>
-              
-            </div>
-          
-         </div>
-            
-            @endforeach
-            
-            @else
-           <h2 style='width:100%;height:130px; margin:auto;'>No Results found....</h2> 
-            @endif
-
-            </div>
-          
-        </section>
-    </section>
-
- 
-
-
-
-
-    <footer class="mt-5">
-      <div class="container">
-         <div class="row">
-            <div class="col-md-4">
-               <div class="full">
-                  <div class="logo_footer">
-                     <!-- <a href="#"><img width="210" src="images/logo.png" alt="#" /></a> -->
-                     <a href="index.html">
-                        <h1>Stitch<span>Spot</span></h1>
-                     </a>
-                  </div>
-                  <div class="information_f">
-                     <p><strong>ADDRESS:</strong> Sargodha, Pakistan</p>
-                     <p><strong>TELEPHONE:</strong> 0300 4563732</p>
-                     <p><strong>EMAIL:</strong> abc@gmail.com</p>
-                  </div>
+            <div class="p-5">
+               <h3 class="font-body text-[13.5px] font-medium text-[#1A1A1A] leading-snug mb-3 line-clamp-2">
+                  {{ Str::substr($item->title, 0, 70) }}…
+               </h3>
+               <div class="flex items-center justify-between">
+                  <span class="font-body text-[12px] text-gray-400 uppercase tracking-wide">Starting at</span>
+                  <span class="font-body text-[14px] font-semibold text-gold">Rs {{ number_format($item->min_price) }}</span>
                </div>
             </div>
-            <div class="col-md-8">
-               <div class="row">
-                  <div class="col-md-7">
-                     <div class="row">
-                        <div class="col-md-6">
-                           <div class="widget_menu">
-                              <h3>Menu</h3>
-                              <ul>
-                                 <li><a href="index.html">Home</a></li>
-                                 <!-- <li><a href="#">About</a></li> -->
-                                 <li><a href="products.html">Products</a></li>
-                                 <li><a href="contact.html">Contact</a></li>
-                              </ul>
-                           </div>
-                        </div>
-                        <div class="col-md-6">
-                           <div class="widget_menu">
-                              <h3>Account</h3>
-                              <ul>
-                                 <li><a href="account.html">Account</a></li>
-                                 <!-- <li><a href="#">Checkout</a></li> -->
-                                 <li><a href="login.html">Login</a></li>
-                                 <li><a href="signup.html">Register</a></li>
-                                 <li><a href="#">Shopping</a></li>
-                              </ul>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-
-               </div>
-            </div>
-         </div>
+         </a>
+         @endforeach
       </div>
-   </footer>
-   <!-- footer end -->
-   <div class="cpy_">
-      <p class="mx-auto">© 2024 All Rights Reserved By <a href="">StitchSpot</a><br>
-      </p>
+
+      @else
+      <div class="text-center py-20">
+         <i class="fa-solid fa-magnifying-glass text-[52px] text-gray-200 mb-5 block"></i>
+         <h3 class="font-display text-[26px] text-[#1A1A1A] mb-2">No Results Found</h3>
+         <p class="font-body text-[14px] text-gray-400 mb-6">
+            We couldn't find any services matching your search.
+         </p>
+         <a href="{{ url('/services') }}"
+            class="inline-flex items-center bg-[#1A1A1A] text-white font-body text-[11px] tracking-[0.18em] uppercase px-7 h-10 hover:bg-gray-800 transition-colors">
+            Browse All Services
+         </a>
+      </div>
+      @endif
+
    </div>
+</section>
 
-               <!--Start of Tawk.to Script-->
-            <script type="text/javascript">
-            var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-            (function(){
-            var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-            s1.async=true;
-            s1.src='https://embed.tawk.to/660d620fa0c6737bd127e781/1hqi4e43n';
-            s1.charset='UTF-8';
-            s1.setAttribute('crossorigin','*');
-            s0.parentNode.insertBefore(s1,s0);
-            })();
-            </script>
-            <!--End of Tawk.to Script-->
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-      crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
-      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-      crossorigin="anonymous"></script>
-   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
-      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-      crossorigin="anonymous"></script>
-  <!-- Include SweetAlert CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-   <script src="{{asset('front-assets/js/jquery.min.js')}}"></script> 
-    <script src="{{asset('front-assets/js/isotope.min.js')}}"></script>
-   <script src="{{asset('front-assets/js/script.js')}}"></script>
-   <script>
-      document.getElementsByClassName("fa")[2].addEventListener(
-         "click", function () {
-            document.getElementsByClassName("links")[0].classList.toggle("showmylinks");
-         });
-      
-         // init Isotope
-        var $grid = $('#product-list').isotope({
-            // options
-        });
-        // filter items on button click
-        $('.col ul').on('click', 'li', function () {
-            var filterValue = $(this).attr('data-filter');
-            $grid.isotope({ filter: filterValue });
-        });
-        $('.col ul').on('click', 'li', function (){
-            $(this).siblings('active').removeClass('active');
-            $(this).addClass('active');
-        })
-
-
-        var MainImg = document.getElementById("main-img");
-        var smallimg = document.getElementsByClassName("small-img");
-
-        smallimg[0].onclick = function () {
-            MainImg.src = smallimg[0].src;
-        }
-        smallimg[1].onclick = function () {
-            MainImg.src = smallimg[1].src;
-        }
-        smallimg[2].onclick = function () {
-            MainImg.src = smallimg[2].src;
-        }
-        smallimg[3].onclick = function () {
-            MainImg.src = smallimg[3].src;
-        }
-      
-   </script>
- 
-  
-</body>
-
-</html>
+@endsection

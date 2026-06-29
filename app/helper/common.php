@@ -2,42 +2,39 @@
 use Illuminate\Support\Facades\DB;
 
 function getTopNavCat(){
+    global $html;
+    $html = ''; // reset so multiple calls don't accumulate
     $result=DB::table('categories')
             ->where(['status'=>1])
             ->get();
-            $arr=[];
-
-            
+    $arr=[];
     foreach($result as $row){
         $arr[$row->id]['category_name']=$row->category_name;
         $arr[$row->id]['parent_category_id']=$row->parent_category_id;
-		$arr[$row->id]['category_slug']=$row->category_slug;
-		
+        $arr[$row->id]['category_slug']=$row->category_slug;
     }
-   
     $str=buildTreeView($arr,0);
- 
     return $str;
 }
 
 $html='';
-function buildTreeView($arr,$parent,$level=0,$prelevel= -1){
+function buildTreeView($arr,$parent,$level=0,$prelevel=-1){
 	global $html;
 	foreach($arr as $id=>$data){
 		if($parent==$data['parent_category_id']){
 			if($level>$prelevel){
 				if($html==''){
-					$html.='<ul class="nav navbar-nav helper_nav" style="font-size:23px">';
+					// Top-level nav list
+					$html.='<ul class="ss-nav-list">';
 				}else{
-					$html.='<ul class="dropdown-menu">';
+					// Dropdown sub-list
+					$html.='<ul class="ss-nav-sub">';
 				}
-				
 			}
 			if($level==$prelevel){
 				$html.='</li>';
 			}
-			$html.='<li><a href="/category/'.$data['category_slug'].'">'.$data['category_name'].'<span class="caret"></span></a>';
-			
+			$html.='<li class="ss-nav-item"><a href="/category/'.$data['category_slug'].'">'.$data['category_name'].'</a>';
 			if($level>$prelevel){
 				$prelevel=$level;
 			}
@@ -50,6 +47,11 @@ function buildTreeView($arr,$parent,$level=0,$prelevel= -1){
 		$html.='</li></ul>';
 	}
 	return $html;
+}
+
+function resetNavHtml(){
+	global $html;
+	$html='';
 }
 
 

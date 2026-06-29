@@ -1,73 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('front.layout')
+@section('title', 'About Us – StitchSpot')
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StitchSpot</title>
-    <link rel="stylesheet" href="{{asset('front-assets/css/bootstrap.css')}}">
-    <link rel="stylesheet" href="{{asset('front-assets/css/style.css')}}">
-    <link href="css/font-awesome.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        .container {
+@section('content')
 
-            min-height: 500px;
-        }
-    </style>
-</head>
+{{-- Hero --}}
+<div class="bg-[#1A1A1A] py-20 text-center">
+   <p class="font-body text-[10.5px] tracking-[4px] uppercase text-gold mb-4">Our Story</p>
+   <h1 class="font-display text-white text-[clamp(34px,5vw,60px)] font-semibold leading-tight">
+      Crafting Style,<br>One Stitch at a Time
+   </h1>
+</div>
 
-<body>
-    <nav class="">
-        <!-- Start header section -->
-        <header id="aa-header">
-           <!-- start header top  -->
-           <div class="aa-header-top">
-              <div class="container">
-                 <div class="row">
-                    <div class="col-md-12">
-                       <div class="aa-header-top-area">
-                          <!-- start header top left -->
-                          <div class="aa-header-top-left">
-                             <h1>Stitch<span>Spot</span></h1>
-                          </div>
-  
-                          <!-- / header top left -->
-                          <div class="aa-header-top-right">
-                             <ul class="aa-head-top-nav-right">
-                                <li><a href="account.html">My Account</a></li>
-                                <li class="hidden-xs"><a href="wishlist.html">Wishlist</a></li>
-                                <li class="hidden-xs"><a href="cart.html">My Cart</a></li>
-                                <li class="hidden-xs"><a href="checkout.html">Checkout</a></li>
-                                <li><a href="login.html" data-toggle="modal" data-target="#login-modal">Login</a></li>
-                             </ul>
-                          </div>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        </header>
-  
-        <!-- / header top  -->
-     </nav>
-  
+{{-- About content --}}
+<section class="py-20 bg-white">
+   <div class="max-w-3xl mx-auto px-6 text-center">
+      <div class="w-12 h-0.5 bg-gold mx-auto mb-10"></div>
+      <p class="font-body text-[15px] text-gray-600 leading-relaxed mb-6">
+         StitchSpot is a premium fashion and tailoring platform that connects customers with skilled tailors
+         across Pakistan. We believe that great style isn't just about what you wear — it's about wearing
+         something made precisely for you.
+      </p>
+      <p class="font-body text-[15px] text-gray-600 leading-relaxed mb-6">
+         Founded with a passion for craftsmanship and a commitment to quality, StitchSpot bridges the gap
+         between modern fashion and traditional tailoring expertise. Whether you're looking for ready-to-wear
+         pieces or custom-tailored garments, we have you covered.
+      </p>
+      <p class="font-body text-[15px] text-gray-600 leading-relaxed">
+         Based in Sargodha, Pakistan — serving customers everywhere.
+      </p>
+      <div class="w-12 h-0.5 bg-gold mx-auto mt-10"></div>
+   </div>
+</section>
 
-    <div class="container m-3">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi dolor sint, deserunt sit praesentium
-            esse voluptatum nam? Quam architecto autem nesciunt commodi excepturi dolore distinctio obcaecati numquam
-            aut aliquam. Laudantium exercitationem possimus ab quibusdam tempore. Totam corrupti, enim reprehenderit
-            atque, porro facere facilis corporis exercitationem magni neque, autem voluptates!</p>
-    </div>
+{{-- Values --}}
+<section class="py-16 bg-[#F9F8F6]">
+   <div class="max-w-[1280px] mx-auto px-4 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+         <div class="px-6">
+            <i class="fa-solid fa-scissors text-gold text-3xl mb-5 block"></i>
+            <h3 class="font-display text-xl font-semibold text-[#1A1A1A] mb-3">Expert Tailoring</h3>
+            <p class="font-body text-[13.5px] text-gray-500 leading-relaxed">Skilled tailors with years of expertise in custom garment creation and alterations.</p>
+         </div>
+         <div class="px-6">
+            <i class="fa-solid fa-shirt text-gold text-3xl mb-5 block"></i>
+            <h3 class="font-display text-xl font-semibold text-[#1A1A1A] mb-3">Quality Fashion</h3>
+            <p class="font-body text-[13.5px] text-gray-500 leading-relaxed">Curated fashion products that combine style, comfort, and lasting quality.</p>
+         </div>
+         <div class="px-6">
+            <i class="fa-solid fa-star text-gold text-3xl mb-5 block"></i>
+            <h3 class="font-display text-xl font-semibold text-[#1A1A1A] mb-3">Customer First</h3>
+            <p class="font-body text-[13.5px] text-gray-500 leading-relaxed">Your satisfaction is our priority. Every order is handled with care and attention.</p>
+         </div>
+      </div>
+   </div>
+</section>
 
-    <div class="cpy_">
-        <p class="mx-auto">© 2024 All Rights Reserved By <a href="">StitchSpot</a><br>
-        </p>
-    </div>
-    <script src="{{asset('front-assets/js/jquery.min.js')}}"></script>
-    <script src="{{asset('front-assets/js/isotope.min.js')}}"></script>
-    <script src="{{asset('front-assets/js/script.js')}}"></script>
-</body>
-
-</html>
+@endsection

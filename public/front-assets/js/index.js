@@ -6,24 +6,29 @@ const progressSteps = document.querySelectorAll(".progress-step");
 const addExperienceBtn = document.querySelector(".add-exp-btn");
 const experiencesGroup = document.querySelector(".experiences-group");
 const btnComplete = document.querySelector(".btn-complete");
-btnComplete.addEventListener("click", () => {
-    document.getElementsByTagName('form').submit
-})
 let formStepsNum = 0;
 let experienceNum = 1;
 
-addExperienceBtn.addEventListener("click", () => {
-    experienceNum++;
-    let text = `
-    <div class="experience-item">
-    <div class="input-group">
-        <label for="title">Add Image</label>
-       <input type="file">
-    </div>
-</div>
-         `
-    experiencesGroup.insertAdjacentHTML('beforeend', text);
-})
+if (btnComplete) {
+    btnComplete.addEventListener("click", () => {
+        const form = document.querySelector('form');
+        if (form) form.submit();
+    });
+}
+
+if (addExperienceBtn && experiencesGroup) {
+    addExperienceBtn.addEventListener("click", () => {
+        experienceNum++;
+        let text = `
+        <div class="experience-item">
+            <div class="input-group">
+                <label for="title">Add Image</label>
+                <input type="file">
+            </div>
+        </div>`;
+        experiencesGroup.insertAdjacentHTML('beforeend', text);
+    });
+}
 
 function updateFormSteps() {
 
