@@ -3,15 +3,28 @@
 
 @section('content')
 
-{{-- ── Hero ── --}}
-<div class="bg-[#1A1A1A] py-16 relative overflow-hidden">
-   <div class="absolute inset-0 opacity-10"
-        style="background-image:repeating-linear-gradient(45deg,#C9A96E 0,#C9A96E 1px,transparent 0,transparent 50%);background-size:20px 20px;"></div>
-   <div class="relative z-10 text-center">
-      <p class="font-body text-[10.5px] tracking-[4px] uppercase text-gold mb-3">We'd Love to Hear From You</p>
-      <h1 class="font-display text-[clamp(32px,5vw,52px)] font-semibold text-white leading-tight">Get in Touch</h1>
+{{-- Hero Banner --}}
+<section class="relative overflow-hidden bg-[#111]" style="min-height:460px">
+   <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600&q=80"
+        alt="Contact Us"
+        class="absolute inset-0 w-full h-full object-cover object-center opacity-45">
+   <div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)"></div>
+
+   <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-24" style="min-height:460px">
+      <p class="font-body text-[10px] tracking-[5px] uppercase text-gold mb-5">We'd Love to Hear From You</p>
+      <h1 class="font-display text-white text-[clamp(38px,5.5vw,72px)] font-semibold leading-tight mb-5">
+         Get in Touch
+      </h1>
+      <p class="font-body text-white/55 text-[15px] leading-relaxed mb-6 max-w-[480px]">
+         Have a question, feedback or a custom tailoring request? We're here to help.
+      </p>
+      <div class="flex items-center gap-3">
+         <a href="{{ url('/') }}" class="font-body text-[11px] tracking-[2px] uppercase text-white/40 hover:text-gold transition-colors">Home</a>
+         <span class="text-white/25 text-xs">›</span>
+         <span class="font-body text-[11px] tracking-[2px] uppercase text-white/65">Contact</span>
+      </div>
    </div>
-</div>
+</section>
 
 {{-- ── Main ── --}}
 <section class="py-16 bg-[#F9F8F6]">

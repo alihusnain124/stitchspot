@@ -2,6 +2,15 @@
 @section('title', 'StitchSpot – New Arrivals & Premium Tailoring')
 
 @section('extra-css')
+/* ── Hero Carousel ── */
+.hero-carousel { position:relative; width:100%; height:100vh; min-height:560px; overflow:hidden; }
+.hero-slide { position:absolute; inset:0; opacity:0; transition:opacity 1s ease; }
+.hero-slide.active { opacity:1; }
+.hero-slide img { width:100%; height:100%; object-fit:cover; object-position:center top; }
+.hero-slide .overlay { position:absolute; inset:0; background:linear-gradient(to right, rgba(0,0,0,.72) 0%, rgba(0,0,0,.3) 60%, rgba(0,0,0,.1) 100%); }
+.hero-content { position:absolute; inset:0; display:flex; align-items:center; z-index:10; }
+@keyframes progressBar { from{width:0} to{width:100%} }
+.hero-progress { height:2px; background:#C9A96E; animation:progressBar 5s linear infinite; }
 /* ── Scroll indicator animation ── */
 @keyframes scrollDown {
    0%,100% { opacity:1; transform:scaleY(1) translateY(0); }
@@ -46,52 +55,71 @@
 @section('content')
 
 {{-- ══════════════════════════
-     HERO
+     HERO CAROUSEL
 ══════════════════════════ --}}
-<section class="grid grid-cols-1 md:grid-cols-2 min-h-[calc(100vh-96px)] overflow-hidden">
+<div class="hero-carousel" id="heroCarousel">
 
-   {{-- Text panel --}}
-   <div class="flex flex-col justify-center px-8 md:px-16 lg:px-24 py-20 bg-[#F9F8F6] relative">
-      <p class="font-body text-[11px] font-semibold tracking-[4px] uppercase text-gray-400 mb-6">
-         New Season — 2025 Collection
-      </p>
-      <h1 class="font-display text-[clamp(40px,5vw,72px)] font-semibold leading-none text-[#1A1A1A] mb-6">
-         Redefine<br>Your <em class="italic text-gold">Style.</em>
-      </h1>
-      <p class="font-body text-base text-gray-500 leading-relaxed max-w-[380px] mb-10">
-         Premium fashion meets expert tailoring. Curated collections crafted for those who dress with intention.
-      </p>
-      <div class="flex gap-4 flex-wrap">
-         <a href="{{ url('/products') }}"
-            class="inline-flex items-center gap-2 h-[50px] px-8 bg-[#1A1A1A] text-white font-body text-[13px] font-semibold tracking-[1.5px] uppercase hover:opacity-80 transition-opacity">
-            Shop Now &nbsp;<i class="fa-solid fa-arrow-right text-[10px]"></i>
-         </a>
-         <a href="{{ url('/services') }}"
-            class="inline-flex items-center h-[50px] px-8 bg-transparent text-[#1A1A1A] font-body text-[13px] font-semibold tracking-[1.5px] uppercase border border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all">
-            Our Tailors
-         </a>
-      </div>
-      {{-- Scroll indicator --}}
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 font-body text-[10px] tracking-[3px] uppercase text-gray-400">
-         Scroll
-         <span class="w-px h-10 bg-gray-400 block hero-scroll-line"></span>
+   {{-- Slide 1 --}}
+   <div class="hero-slide active">
+      <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1600&q=85&auto=format&fit=crop" alt="Slide 1" loading="eager">
+      <div class="overlay"></div>
+   </div>
+
+   {{-- Slide 2 --}}
+   <div class="hero-slide">
+      <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=85&auto=format&fit=crop" alt="Slide 2" loading="lazy">
+      <div class="overlay"></div>
+   </div>
+
+   {{-- Slide 3 --}}
+   <div class="hero-slide">
+      <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1600&q=85&auto=format&fit=crop" alt="Slide 3" loading="lazy">
+      <div class="overlay"></div>
+   </div>
+
+   {{-- Slide 4 --}}
+   <div class="hero-slide">
+      <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1600&q=85&auto=format&fit=crop" alt="Slide 4" loading="lazy">
+      <div class="overlay"></div>
+   </div>
+
+   {{-- Slide 5 --}}
+   <div class="hero-slide">
+      <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1600&q=85&auto=format&fit=crop" alt="Slide 5" loading="lazy">
+      <div class="overlay"></div>
+   </div>
+
+   {{-- Text content (static, always visible) --}}
+   <div class="hero-content px-6 md:px-16 lg:px-24">
+      <div class="max-w-[560px]">
+         <p class="font-body text-[11px] font-semibold tracking-[5px] uppercase text-gold mb-5">
+            Premium Fashion · Expert Tailoring
+         </p>
+         <h1 class="font-display text-white text-[clamp(38px,5.5vw,78px)] font-semibold leading-[1.05] mb-6">
+            Style That<br>Speaks <em class="italic text-gold">Volumes.</em>
+         </h1>
+         <p class="font-body text-white/60 text-[15px] leading-relaxed max-w-[400px] mb-10">
+            From everyday wear to bespoke tailoring — we dress every version of you, exactly the way you deserve.
+         </p>
+         <div class="flex gap-4 flex-wrap">
+            <a href="{{ url('/products') }}"
+               class="inline-flex items-center gap-2 h-[50px] px-8 bg-gold text-white font-body text-[12px] font-semibold tracking-[2px] uppercase hover:bg-white hover:text-[#1A1A1A] transition-all">
+               Explore Collection <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </a>
+            <a href="{{ url('/services') }}"
+               class="inline-flex items-center h-[50px] px-8 bg-transparent text-white font-body text-[12px] font-semibold tracking-[2px] uppercase border border-white/50 hover:border-gold hover:text-gold transition-all">
+               Book a Tailor
+            </a>
+         </div>
       </div>
    </div>
 
-   {{-- Image panel --}}
-   <div class="relative overflow-hidden h-[55vh] md:h-auto group">
-      <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&q=80&auto=format&fit=crop"
-           alt="Fashion editorial"
-           class="w-full h-full object-cover object-top group-hover:scale-[1.04] transition-transform duration-[8s] ease-linear"
-           loading="eager">
-      {{-- Badge --}}
-      <div class="absolute bottom-10 left-10 bg-white/90 backdrop-blur-sm p-4 lg:p-5">
-         <span class="font-body text-[11px] text-gray-400 uppercase tracking-[2px]">New Arrivals</span>
-         <strong class="block font-display text-[22px] font-semibold mt-0.5">SS 2025</strong>
-      </div>
+   {{-- Progress bar --}}
+   <div class="absolute bottom-0 left-0 w-full h-[2px] bg-white/10 z-20">
+      <div class="hero-progress" id="heroProgress"></div>
    </div>
 
-</section>
+</div>
 
 
 {{-- ══════════════════════════
@@ -111,33 +139,33 @@
          <a href="{{ url('/category/women') }}" class="relative overflow-hidden cursor-pointer group block" style="aspect-ratio:3/4">
             <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=700&q=80&auto=format&fit=crop"
                  alt="Women" class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-black/5 group-hover:from-black/65 transition-all duration-300"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-               <span class="font-body text-[10px] tracking-[3px] uppercase opacity-75">Collection 2025</span>
-               <h3 class="font-display text-[26px] font-semibold my-1">Women</h3>
-               <span class="font-body text-[11px] tracking-[2px] uppercase border-b border-white/50 pb-0.5 hover:border-white transition-colors">Shop Now</span>
+            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.05) 100%)"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-7 text-white">
+               <span class="block font-body text-[10px] tracking-[3px] uppercase text-gold mb-1">Collection 2025</span>
+               <h3 class="font-display text-[30px] font-bold text-white mb-2 drop-shadow-lg">Women</h3>
+               <span class="inline-flex items-center gap-1.5 font-body text-[11px] tracking-[2px] uppercase text-white border-b border-gold pb-0.5">Shop Now <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
             </div>
          </a>
 
          <a href="{{ url('/category/men') }}" class="relative overflow-hidden cursor-pointer group block" style="aspect-ratio:3/4">
             <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80&auto=format&fit=crop"
                  alt="Men" class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-black/5 group-hover:from-black/65 transition-all duration-300"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-               <span class="font-body text-[10px] tracking-[3px] uppercase opacity-75">Collection 2025</span>
-               <h3 class="font-display text-[26px] font-semibold my-1">Men</h3>
-               <span class="font-body text-[11px] tracking-[2px] uppercase border-b border-white/50 pb-0.5 hover:border-white transition-colors">Shop Now</span>
+            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.05) 100%)"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-7 text-white">
+               <span class="block font-body text-[10px] tracking-[3px] uppercase text-gold mb-1">Collection 2025</span>
+               <h3 class="font-display text-[30px] font-bold text-white mb-2 drop-shadow-lg">Men</h3>
+               <span class="inline-flex items-center gap-1.5 font-body text-[11px] tracking-[2px] uppercase text-white border-b border-gold pb-0.5">Shop Now <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
             </div>
          </a>
 
          <a href="{{ url('/products') }}" class="relative overflow-hidden cursor-pointer group block" style="aspect-ratio:3/4">
             <img src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=700&q=80&auto=format&fit=crop"
                  alt="Accessories" class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-black/5 group-hover:from-black/65 transition-all duration-300"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-               <span class="font-body text-[10px] tracking-[3px] uppercase opacity-75">Collection 2025</span>
-               <h3 class="font-display text-[26px] font-semibold my-1">Accessories</h3>
-               <span class="font-body text-[11px] tracking-[2px] uppercase border-b border-white/50 pb-0.5 hover:border-white transition-colors">Shop Now</span>
+            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.05) 100%)"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-7 text-white">
+               <span class="block font-body text-[10px] tracking-[3px] uppercase text-gold mb-1">Collection 2025</span>
+               <h3 class="font-display text-[30px] font-bold text-white mb-2 drop-shadow-lg">Accessories</h3>
+               <span class="inline-flex items-center gap-1.5 font-body text-[11px] tracking-[2px] uppercase text-white border-b border-gold pb-0.5">Shop Now <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
             </div>
          </a>
 
@@ -576,5 +604,23 @@ function qvAddToCart() {
    closeQuickView(null, true);
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeQuickView(null, true); });
+
+/* ── Hero Carousel ── */
+(function(){
+   const slides   = document.querySelectorAll('.hero-slide');
+   const progress = document.getElementById('heroProgress');
+   let current = 0;
+
+   function next() {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+      progress.style.animation = 'none';
+      progress.offsetHeight;
+      progress.style.animation = 'progressBar 5s linear infinite';
+   }
+
+   setInterval(next, 5000);
+})();
 </script>
 @endsection

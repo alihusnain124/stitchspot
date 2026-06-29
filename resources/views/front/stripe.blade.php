@@ -2,44 +2,64 @@
 @section('title', 'Payment – StitchSpot')
 
 @section('extra-css')
-   .hide { display: none !important; }
-   .has-error input { border-color: #E63946 !important; }
+<style>
+   .stripe-el { transition: border-color 200ms, box-shadow 200ms, background-color 200ms; }
+   .stripe-el.StripeElement--focus    { border-color: #C9A96E !important; background-color: #fff !important; box-shadow: 0 0 0 3px rgba(201,169,110,0.15) !important; }
+   .stripe-el.StripeElement--invalid  { border-color: #E63946 !important; background-color: #fff8f8 !important; }
+   .stripe-el.StripeElement--complete { border-color: #10B981 !important; background-color: #f0fdf4 !important; }
+</style>
 @endsection
 
 @section('head')
-<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script src="https://js.stripe.com/v3/"></script>
 @endsection
 
 @section('content')
 
-<div class="bg-[#F9F8F6] border-b border-gray-100 py-12 text-center">
-   <p class="font-body text-[10.5px] tracking-[4px] uppercase text-gray-400 mb-2">Secure Checkout</p>
-   <h1 class="font-display text-[clamp(28px,4vw,40px)] font-semibold text-[#1A1A1A]">Payment Details</h1>
-</div>
+{{-- Hero Banner --}}
+<section class="relative overflow-hidden bg-[#111]" style="min-height:460px">
+   <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1600&q=80"
+        alt="Payment"
+        class="absolute inset-0 w-full h-full object-cover object-center opacity-45">
+   <div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)"></div>
 
-<section class="py-16 bg-white">
-   <div class="max-w-lg mx-auto px-6">
-
-      {{-- Success message --}}
-      @if(Session::has('success'))
-      <div class="mb-6 px-4 py-3 bg-green-50 border border-green-200 text-green-700 font-body text-sm text-center">
-         {{ Session::get('success') }}
+   <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-24" style="min-height:460px">
+      <p class="font-body text-[10px] tracking-[5px] uppercase text-gold mb-5">
+         <i class="fa-solid fa-lock text-[9px] mr-1"></i> Secure Checkout
+      </p>
+      <h1 class="font-display text-white text-[clamp(38px,5.5vw,72px)] font-semibold leading-tight mb-5">
+         Payment Details
+      </h1>
+      <p class="font-body text-white/55 text-[15px] leading-relaxed mb-6 max-w-[480px]">
+         Your payment is encrypted and 100% secure. Complete your purchase below.
+      </p>
+      <div class="flex items-center gap-3">
+         <a href="{{ url('/') }}" class="font-body text-[11px] tracking-[2px] uppercase text-white/40 hover:text-gold transition-colors">Home</a>
+         <span class="text-white/25 text-xs">›</span>
+         <a href="{{ url('/cart') }}" class="font-body text-[11px] tracking-[2px] uppercase text-white/40 hover:text-gold transition-colors">Cart</a>
+         <span class="text-white/25 text-xs">›</span>
+         <span class="font-body text-[11px] tracking-[2px] uppercase text-white/65">Payment</span>
       </div>
-      @endif
+   </div>
+</section>
+
+<section class="py-16 bg-white min-h-[60vh]">
+   <div class="max-w-[600px] mx-auto px-4 lg:px-8">
+
 
       {{-- Card --}}
-      <div class="border border-gray-200 bg-white">
-         <div class="px-6 py-4 border-b border-gray-100">
-            <h2 class="font-display text-xl font-semibold text-[#1A1A1A]">Card Information</h2>
-            <p class="font-body text-[12px] text-gray-400 mt-1">Your payment is secured with SSL encryption</p>
+      <div class="border border-gray-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-sm">
+         <div class="px-8 py-6 border-b border-gray-100 bg-[#F9F8F6]/30 flex justify-between items-center">
+            <div>
+               <h2 class="font-display text-[24px] font-semibold text-[#1A1A1A]">Card Information</h2>
+               <p class="font-body text-[13px] text-gray-500 mt-1 flex items-center gap-2">
+                  <i class="fa-solid fa-lock text-[10px] text-green-600"></i> Secure encrypted connection
+               </p>
+            </div>
          </div>
 
-         <div class="px-6 py-6">
-            <form role="form" action="{{ route('stripe.post') }}" method="post"
-               class="require-validation"
-               data-cc-on-file="false"
-               data-stripe-publishable-key="{{ env('STRIPE_KEY') }}"
-               id="payment-form">
+         <div class="px-7 py-8">
+            <form action="{{ route('stripe.post') }}" method="post" id="payment-form" class="space-y-5">
                @csrf
 
                {{-- Hidden order fields --}}
@@ -52,58 +72,41 @@
                <input type="hidden" name="zip_code"       value="{{ $zip_code }}">
                <input type="hidden" name="is_stitch"      value="{{ $is_stitch }}">
                <input type="hidden" name="total_price"    value="{{ $total_price }}">
-               <input type="hidden" name="payment_method" value="{{ $payment_method }}" class="method">
+               <input type="hidden" name="payment_method" value="{{ $payment_method }}">
 
-               {{-- Name on card --}}
-               <div class="form-row required mb-5">
-                  <label class="block font-body text-[12px] text-gray-500 uppercase tracking-wide mb-2">Name on Card</label>
-                  <input type="text" placeholder="Full name on card"
-                     class="w-full h-11 px-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+               {{-- Card Number --}}
+               <div>
+                  <label class="block font-body text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Card Number</label>
+                  <div id="card-number" class="stripe-el w-full py-[16px] px-4 border-[1.5px] border-gray-200 bg-gray-50"></div>
                </div>
 
-               {{-- Card number --}}
-               <div class="form-row card required mb-5">
-                  <label class="block font-body text-[12px] text-gray-500 uppercase tracking-wide mb-2">Card Number</label>
-                  <input type="text" autocomplete="off" placeholder="•••• •••• •••• ••••"
-                     class="form-control card-number w-full h-11 px-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
-               </div>
-
-               {{-- CVC / Expiry --}}
-               <div class="grid grid-cols-3 gap-4 mb-6">
-                  <div class="form-row cvc required">
-                     <label class="block font-body text-[12px] text-gray-500 uppercase tracking-wide mb-2">CVC</label>
-                     <input type="text" autocomplete="off" placeholder="123"
-                        class="form-control card-cvc w-full h-11 px-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+               {{-- Expiry & CVC --}}
+               <div class="grid grid-cols-2 gap-4">
+                  <div>
+                     <label class="block font-body text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Expiry Date</label>
+                     <div id="card-expiry" class="stripe-el w-full py-[16px] px-4 border-[1.5px] border-gray-200 bg-gray-50"></div>
                   </div>
-                  <div class="form-row expiration required">
-                     <label class="block font-body text-[12px] text-gray-500 uppercase tracking-wide mb-2">Month</label>
-                     <input type="text" placeholder="MM"
-                        class="form-control card-expiry-month w-full h-11 px-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
-                  </div>
-                  <div class="form-row expiration required">
-                     <label class="block font-body text-[12px] text-gray-500 uppercase tracking-wide mb-2">Year</label>
-                     <input type="text" placeholder="YYYY"
-                        class="form-control card-expiry-year w-full h-11 px-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+                  <div>
+                     <label class="block font-body text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-2">CVC / CVV</label>
+                     <div id="card-cvc" class="stripe-el w-full py-[16px] px-4 border-[1.5px] border-gray-200 bg-gray-50"></div>
                   </div>
                </div>
 
-               {{-- Error message --}}
-               <div class="error form-row hide mb-4">
-                  <div class="alert px-4 py-3 bg-red-50 border border-red-200 font-body text-sm text-red-600">
-                     Please correct the errors and try again.
-                  </div>
-               </div>
+               <!-- Error display -->
+               <div id="card-errors" role="alert" class="font-body text-[13px] text-red-600 bg-red-50 border border-red-200 px-4 py-3 items-center gap-2" style="display:none"></div>
 
                {{-- Submit --}}
-               <button type="submit"
-                  class="w-full h-12 bg-[#1A1A1A] text-white font-body font-semibold text-[12px] tracking-[0.2em] uppercase hover:bg-gray-800 transition-colors border-none cursor-pointer flex items-center justify-center gap-2">
-                  <i class="fa-solid fa-lock text-[11px]"></i>
-                  Pay Now — Rs {{ $total_price }}
+               <button type="submit" id="submit-button"
+                  class="w-full h-14 bg-[#1A1A1A] text-white font-body font-semibold text-[13px] tracking-[2px] uppercase hover:bg-gold transition-colors border-none cursor-pointer flex items-center justify-center gap-3 mt-6 shadow-lg shadow-black/5">
+                  <i class="fa-solid fa-lock text-[12px]"></i>
+                  Pay Now — Rs {{ number_format($total_price) }}
                </button>
 
-               <p class="font-body text-[11px] text-gray-400 text-center mt-4">
-                  <i class="fa-solid fa-shield-halved mr-1"></i> 256-bit SSL secure payment
-               </p>
+               <div class="flex items-center justify-center gap-4 mt-8 pt-6 border-t border-gray-100">
+                  <i class="fa-brands fa-cc-stripe text-gray-300 text-3xl"></i>
+                  <i class="fa-brands fa-cc-visa text-gray-300 text-3xl"></i>
+                  <i class="fa-brands fa-cc-mastercard text-gray-300 text-3xl"></i>
+               </div>
 
             </form>
          </div>
@@ -115,52 +118,91 @@
 @endsection
 
 @section('scripts')
-<script type="text/javascript">
-$(function() {
-    var $form = $(".require-validation");
-    $('form.require-validation').bind('submit', function(e) {
-        var $form = $(".require-validation"),
-            inputSelector = ['input[type=email]', 'input[type=password]',
-                'input[type=text]', 'input[type=file]',
-                'textarea'
-            ].join(', '),
-            $inputs = $form.find('.required').find(inputSelector),
-            $errorMessage = $form.find('div.error'),
-            valid = true;
-        $errorMessage.addClass('hide');
-        $('.has-error').removeClass('has-error');
-        $inputs.each(function(i, el) {
-            var $input = $(el);
-            if ($input.val() === '') {
-                $input.parent().addClass('has-error');
-                $errorMessage.removeClass('hide');
-                e.preventDefault();
+<script>
+   // Create a Stripe client.
+   var stripe = Stripe('{{ env('STRIPE_KEY') }}');
+
+   // Create an instance of Elements.
+   var elements = stripe.elements();
+
+   // Custom styling can be passed to options when creating an Element.
+   var style = {
+      base: {
+         color: '#1A1A1A',
+         fontFamily: '"DM Sans", system-ui, sans-serif',
+         fontSmoothing: 'antialiased',
+         fontSize: '14px',
+         '::placeholder': { color: '#C0C7D0' }
+      },
+      invalid: { color: '#E63946', iconColor: '#E63946' }
+   };
+
+
+   // Create three SEPARATE elements for individual rows
+   var cardNumber = elements.create('cardNumber', { style: style });
+   var cardExpiry = elements.create('cardExpiry', { style: style });
+   var cardCvc    = elements.create('cardCvc',    { style: style });
+
+   cardNumber.mount('#card-number');
+   cardExpiry.mount('#card-expiry');
+   cardCvc.mount('#card-cvc');
+
+   // Show real-time errors on any element change
+   [cardNumber, cardExpiry, cardCvc].forEach(function(el) {
+      el.on('change', function(event) {
+         var displayError = document.getElementById('card-errors');
+         if (event.error) {
+            displayError.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-2"></i>' + event.error.message;
+            displayError.style.display = 'flex';
+         } else {
+            displayError.textContent = '';
+            displayError.style.display = 'none';
+         }
+      });
+   });
+
+   // Handle form submission.
+   var form = document.getElementById('payment-form');
+   var submitButton = document.getElementById('submit-button');
+
+   form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      submitButton.disabled = true;
+      submitButton.classList.add('opacity-80', 'cursor-not-allowed');
+      submitButton.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-[14px]"></i>&nbsp; Processing...';
+
+      stripe.confirmCardPayment('{{ $client_secret }}', {
+         payment_method: {
+            card: cardNumber,
+            billing_details: {
+               name: '{{ $name }}',
+               email: '{{ $email }}'
             }
-        });
-        if (!$form.data('cc-on-file')) {
-            e.preventDefault();
-            Stripe.setPublishableKey($form.data('stripe-publishable-key'));
-            Stripe.createToken({
-                number: $('.card-number').val(),
-                cvc: $('.card-cvc').val(),
-                exp_month: $('.card-expiry-month').val(),
-                exp_year: $('.card-expiry-year').val()
-            }, stripeResponseHandler);
-        }
-    });
-    function stripeResponseHandler(status, response) {
-        if (response.error) {
-            $('.error')
-                .removeClass('hide')
-                .find('.alert')
-                .text(response.error.message);
-        } else {
-            var token = response['id'];
-            $form.find('input[type=text]').empty();
-            $form.append("<input type='hidden' name='stripeToken' value='" + token + "'/>");
-            $form.get(0).submit();
-        }
-    }
-});
+         }
+      }).then(function(result) {
+         if (result.error) {
+            var errorElement = document.getElementById('card-errors');
+            errorElement.innerHTML = '<i class="fa-solid fa-circle-exclamation mr-2"></i>' + result.error.message;
+            errorElement.style.display = 'flex';
+            submitButton.disabled = false;
+            submitButton.classList.remove('opacity-80', 'cursor-not-allowed');
+            submitButton.innerHTML = '<i class="fa-solid fa-lock text-[12px]"></i>&nbsp; Pay Now — Rs {{ number_format($total_price) }}';
+         } else {
+            if (result.paymentIntent.status === 'succeeded') {
+               stripeTokenHandler(result.paymentIntent.id);
+            }
+         }
+      });
+   });
+
+   function stripeTokenHandler(token) {
+      var form = document.getElementById('payment-form');
+      var hiddenInput = document.createElement('input');
+      hiddenInput.setAttribute('type', 'hidden');
+      hiddenInput.setAttribute('name', 'stripeToken');
+      hiddenInput.setAttribute('value', token);
+      form.appendChild(hiddenInput);
+      form.submit();
+   }
 </script>
 @endsection

@@ -16,14 +16,6 @@
    $reviewTotal = count($reviews);
 @endphp
 
-{{-- Flash message --}}
-@if(session('msg'))
-<div class="max-w-[1280px] mx-auto px-4 pt-6">
-   <div class="px-4 py-3 bg-green-50 border border-green-200 font-body text-sm text-green-700">
-      {{ session('msg') }}
-   </div>
-</div>
-@endif
 
 {{-- Profile header banner --}}
 <div class="bg-[#1A1A1A] h-36 relative">

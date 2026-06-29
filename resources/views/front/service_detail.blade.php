@@ -186,3 +186,97 @@
 </div>
 
 @endsection
+
+@section('scripts')
+<script>
+// Override the global user_order with a select-based modal
+function user_order(id, user_id) {
+
+   @php
+      $orderOptions = '';
+      if(isset($pending_orders) && $pending_orders->count() > 0) {
+         foreach($pending_orders as $o) {
+            $label = 'Order #'.$o->order_id.' · '.$o->product_name.' · Qty: '.$o->product_qty;
+            $orderOptions .= '<option value="'.$o->id.'">'.htmlspecialchars($label).'</option>';
+         }
+      }
+   @endphp
+
+   const hasOrders = {{ isset($pending_orders) && $pending_orders->count() > 0 ? 'true' : 'false' }};
+
+   const orderSelectHtml = hasOrders
+      ? `<div style="margin-bottom:12px;text-align:left">
+            <label style="font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#888;display:block;margin-bottom:6px;">Select Your Order</label>
+            <select id="prod_order_id" style="width:100%;padding:10px 12px;border:1.5px solid #E5E7EB;border-radius:4px;font-size:13px;color:#1A1A1A;outline:none;background:#fff;">
+               <option value="">— Choose your order —</option>
+               {!! $orderOptions !!}
+            </select>
+         </div>`
+      : `<div style="background:#FFF8F0;border:1px solid #F3D9B0;padding:12px 16px;border-radius:4px;margin-bottom:12px;font-size:13px;color:#92650A;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right:6px"></i>
+            You have no orders yet. Please shop first before booking a tailor service.
+         </div>`;
+
+   // Build custom booking overlay
+   const ov = document.createElement('div');
+   ov.className = 'ss-overlay';
+   ov.innerHTML = `
+      <div class="ss-modal" style="padding:32px;max-width:460px">
+         <div style="font-size:17px;font-weight:600;color:#1A1A1A;margin-bottom:20px">Book This Service</div>
+         ${orderSelectHtml}
+         ${hasOrders ? `
+         <div style="margin-bottom:12px">
+            <label class="ss-input-label">Your Budget (Rs)</label>
+            <input id="sd_price" class="ss-input" type="number" placeholder="e.g. 2500">
+         </div>
+         <div style="margin-bottom:4px">
+            <label class="ss-input-label">Delivery Time (days)</label>
+            <input id="sd_time" class="ss-input" type="number" placeholder="e.g. 7">
+         </div>
+         <div id="sd_err" style="color:#E63946;font-size:12px;min-height:18px;margin-top:8px"></div>
+         ` : ''}
+         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+            <button class="ss-btn ss-btn-ghost" id="sd_cancel">Cancel</button>
+            <button class="ss-btn ss-btn-gold" id="sd_confirm">${hasOrders ? 'Confirm Booking' : 'Go to Products'}</button>
+         </div>
+      </div>`;
+   document.body.appendChild(ov);
+   requestAnimationFrame(() => requestAnimationFrame(() => ov.classList.add('ss-show')));
+
+   function _closeBooking() { ov.classList.remove('ss-show'); setTimeout(() => ov.remove(), 260); }
+
+   ov.querySelector('#sd_cancel').onclick = _closeBooking;
+   ov.addEventListener('click', e => { if (e.target === ov) _closeBooking(); });
+
+   ov.querySelector('#sd_confirm').onclick = function() {
+      if (!hasOrders) { _closeBooking(); window.location.href = '/products'; return; }
+      const product_order_id = ov.querySelector('#prod_order_id').value;
+      const price = ov.querySelector('#sd_price').value;
+      const time  = ov.querySelector('#sd_time').value;
+      const errEl = ov.querySelector('#sd_err');
+      if (!product_order_id) { errEl.textContent = 'Please select an order'; return; }
+      if (!price)            { errEl.textContent = 'Please enter your budget'; return; }
+      if (!time)             { errEl.textContent = 'Please enter delivery time'; return; }
+      errEl.textContent = '';
+      const btn = this; btn.textContent = 'Booking…'; btn.disabled = true;
+      $.ajax({
+         url: '/user_order',
+         data: { product_order_id, price, time, id, user_id, _token: $('meta[name="csrf-token"]').attr('content') },
+         type: 'post',
+         success: function(result) {
+            _closeBooking();
+            if (result.status === 'success') {
+               SS.alert('success', 'Booked!', result.msg);
+            } else {
+               SS.alert('error', 'Error', result.msg);
+            }
+         },
+         error: function() {
+            _closeBooking();
+            SS.toast('error', 'Something went wrong', 'Please try again.');
+         }
+      });
+   };
+}
+</script>
+@endsection

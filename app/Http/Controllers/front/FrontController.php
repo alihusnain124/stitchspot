@@ -278,12 +278,14 @@ class FrontController extends Controller
 
        
         if($query){
-         
+            if($status === 'update' && isset($image_name) && $image_name) {
+                session()->put('FRONT_USER_IMAGE', $image_name);
+            }
             return response()->json(['msg'=>$msg,'status'=>$status,'id'=>$id]);
         }
       }
 
-   
+
     }
 
     public function login(Request $req){
@@ -320,6 +322,7 @@ class FrontController extends Controller
             $req->session()->put('FRONT_USER_MOBILE',$result[0]->mobile);
             $req->session()->put('IS_TAILOR',$result[0]->tailor);
             $req->session()->put('FRONT_USER_TYPE','Reg');
+            $req->session()->put('FRONT_USER_IMAGE',$result[0]->image ?? '');
 
 
            
@@ -435,14 +438,16 @@ class FrontController extends Controller
 
 public function products(Request $req){
 
-       ///products
-
        $result['product']=DB::table('products')->where(['status'=>1])->get();
        foreach($result['product'] as $item1){
            $result['product_attr'][$item1->id]=DB::table('products_attr')->leftJoin('sizes','sizes.id','=','products_attr.size_id')
            ->leftJoin('colors','colors.id','=','products_attr.color_id')->where(['products_attr.products_id'=>$item1->id])->get();
-           }
+       }
 
+       $uid = session()->get('FRONT_USER_LOGIN');
+       $result['wishlist_ids'] = $uid
+           ? DB::table('wishlists')->where('user_id', $uid)->pluck('product_id')->toArray()
+           : [];
 
     return view('front.products',$result);
 }
@@ -1278,13 +1283,14 @@ public function add_service(Request $req){
   $desc=$req->input('desc');
   $requirement=$req->input('requirement');
 
+  $image_name = '';
   if($req->hasfile('image')){
 
     $image=$req->file('image');
     $ext=$image->extension();
     $image_name=time().'.'.$ext;
     $image->storeAs('/public/media/services/',$image_name);
-  
+
    }
 
 
@@ -1417,12 +1423,23 @@ if($result){
 public function service_details(Request $req,$id){
 
     $result['services']=DB::table('services')->where('id',$id)->get();
-   
-    $user_id=$result['services'][0]->user_id;
 
+    $user_id=$result['services'][0]->user_id;
 
     $result['user']=DB::table('customers')->where('id',$user_id)->get();
 
+    // Order items eligible for tailor service (is_stitch=yes, not yet given to tailor)
+    $uid = session()->get('FRONT_USER_LOGIN');
+    if($uid) {
+        $userOrderIds = DB::table('orders')->where('user_id', $uid)->pluck('id');
+        $result['pending_orders'] = DB::table('order_details')
+            ->whereIn('order_id', $userOrderIds)
+            ->where('is_stitch', 'yes')
+            ->where('is_given_tailor', 'no')
+            ->get();
+    } else {
+        $result['pending_orders'] = collect();
+    }
 
   return view('front.service_detail',$result);
     
@@ -1811,6 +1828,46 @@ public function account_no(Request $req){
         return redirect()->back()->with('cart_msg','Added Successfully');
     }else{
         return redirect()->back()->with('cart_msg','Error Occured');
+    }
+}
+
+public function wishlist(Request $req){
+    if(!session()->has('FRONT_USER_LOGIN')){
+        return redirect('/login')->with('msg','Please login to view your wishlist');
+    }
+    $uid = session()->get('FRONT_USER_LOGIN');
+    $wishlist_ids = DB::table('wishlists')->where('user_id', $uid)->pluck('product_id')->toArray();
+
+    $result['wishlist_products'] = [];
+    $result['wishlist_attrs']    = [];
+    if(count($wishlist_ids)){
+        $result['wishlist_products'] = DB::table('products')->whereIn('id', $wishlist_ids)->where('status',1)->get();
+        foreach($result['wishlist_products'] as $p){
+            $result['wishlist_attrs'][$p->id] = DB::table('products_attr')
+                ->leftJoin('sizes','sizes.id','=','products_attr.size_id')
+                ->leftJoin('colors','colors.id','=','products_attr.color_id')
+                ->where('products_attr.products_id', $p->id)->get();
+        }
+    }
+    $result['wishlist_ids'] = $wishlist_ids;
+    return view('front.wishlist', $result);
+}
+
+public function wishlistToggle(Request $req){
+    if(!session()->has('FRONT_USER_LOGIN')){
+        return response()->json(['status'=>'login','message'=>'Please login to use wishlist']);
+    }
+    $user_id = session()->get('FRONT_USER_LOGIN');
+    $product_id = $req->post('product_id');
+
+    $exists = DB::table('wishlists')->where(['user_id'=>$user_id,'product_id'=>$product_id])->first();
+
+    if($exists){
+        DB::table('wishlists')->where(['user_id'=>$user_id,'product_id'=>$product_id])->delete();
+        return response()->json(['status'=>'removed','message'=>'Removed from wishlist']);
+    } else {
+        DB::table('wishlists')->insert(['user_id'=>$user_id,'product_id'=>$product_id,'created_at'=>now()]);
+        return response()->json(['status'=>'added','message'=>'Added to wishlist']);
     }
 }
 
