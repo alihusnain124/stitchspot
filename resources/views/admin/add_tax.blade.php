@@ -1,53 +1,43 @@
-@extends('admin/layout');
+@extends('admin/layout')
 @section('title','Add Tax')
+@section('page_title','{{ $id > 0 ? "Edit Tax" : "Add Tax" }}')
 @section('tax_select','active')
-@section('add')
+@section('content')
 
-        <div class="page-container">
-       
-            <header class="header">
-                <p>Welcome {{session()->get('admin_email')}}</p>
-                <a class='alii' href="{{url('/admin/logout')}}"><button class='btn btn-danger '>Logout</button></a>
-            </header>
-          
-            <div class="main-content">
-    
-            <h1 class="mx-5">Add Tax</h1>
-            <a href="{{url('/admin/tax')}}"><button type="button" class="btn btn-outline-success mx-5 mt-3">Back</button></a>
-            <div class="row">
-                <div class="col-md-12 mt-4">
-                    <form action="{{route('tax.manage_process')}}" method="post" >
-                        @csrf
-                    <div class="form-container">
-                     <div class="row">
-                        <div class="col-md-6">
-                            <label for="Category" class="control-label mb-1">Tax Desc</label>
-                           <input id="tax_desc" name="tax_desc" value='{{$tax_desc}}' type="text" class="form-control" aria-required="true" aria-invalid="false" >
-                        </div>
-                        <div class="col-md-6">
-                            <label for="Category" class="control-label mb-1">Tax value</label>
-                            <input id="tax_value" name="tax_value" value='{{$tax_value}}' type="text" class="form-control" aria-required="true" aria-invalid="false" >
-                            @error('tax_value')
-                            <div class="alert alert-danger mt-2" role='alert'>
-                                {{'Requried,and should be unique'}}
-                            </div>
-                            @enderror
-                        </div>
-                     </div>
-                     
-                     <div class="d-grid gap-2 mt-3">
-                        <button class="btn btn-info text-whites" type="submit">Submit</button>
-                       
-                      </div>
-                      <input type="hidden" name='id' value="{{$id}}">
-                    </div>
-                    </form>
-                </div>
-            </div>
-                
-            </div>
-       
+<div class="mb-3">
+  <a href="{{url('/admin/tax')}}" class="btn-adm btn-adm-ghost">
+    <i class="fa-solid fa-arrow-left"></i> Back to Taxes
+  </a>
+</div>
+
+<div class="admin-card" style="max-width:600px;">
+  <div class="admin-card-header">
+    <span class="admin-card-title">{{ $id > 0 ? 'Edit Tax' : 'Add Tax' }}</span>
+  </div>
+  <div class="admin-card-body">
+    <form action="{{route('tax.manage_process')}}" method="post">
+      @csrf
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="adm-label">Tax Description</label>
+          <input id="tax_desc" name="tax_desc" value="{{$tax_desc}}" type="text" class="adm-input">
         </div>
+        <div class="col-md-6">
+          <label class="adm-label">Tax Value</label>
+          <input id="tax_value" name="tax_value" value="{{$tax_value}}" type="text" class="adm-input">
+          @error('tax_value')
+            <div class="adm-err">Required and should be unique</div>
+          @enderror
+        </div>
+      </div>
+      <input type="hidden" name="id" value="{{$id}}">
+      <div class="mt-4">
+        <button type="submit" class="btn-adm btn-adm-dark">
+          <i class="fa-solid fa-floppy-disk"></i> Save Tax
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 
-    </div>
 @endsection

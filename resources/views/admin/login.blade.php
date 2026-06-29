@@ -1,62 +1,195 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="{{asset('admin-assets/css/style.css')}}" rel="stylesheet" media="all">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" integrity="sha384-4LISF5TTJX/fLmGSxO53rV4miRxdg84mZsxmO8Rx5jGtp/LbrixFETvWa5a6sESd" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  </head>
-  <body>
-   
-        <div class="page-content">
-                <div class="login-wrap">
-                 <div class="login-logo">
-                    <a href="#"><img src="{{asset('admin-assets/images/icon/logo.png')}}" alt="" /> </a>
-                 </div>
-                 <form action="{{route('admin.auth')}}" method='post'>
-                    @csrf
-                 <div class="form">
-                    <div class="row">
-                            <div class="col-md-12">
-                                <label for="exampleFormControlInput1" class="form-label">Email Address</label>
-                                <input type="email" name='email' class="form-control" placeholder="Email">
-                            </div>
-                        
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-12">
-                            <label for="exampleFormControlInput1" class="form-label">Password</label>
-                            <input type="password" name='password' class="form-control"  placeholder="Password">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 mt-3"> 
-                            Remember Me <input type="checkbox" class="">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 mt-3">
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-info text-white" type="submit">Login</button>
-                              </div>   
-                        </div>
-                        @if (session('error'))
-                        <div class="alert alert-danger mt-3" role='alert'>
-                            {{session('error')}}
-                        </div>
-                       @endif
-                    </div>
-                 </div>
-                 </form>
-              </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login — StitchSpot</title>
+  <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+  <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ─── LEFT PANEL ─── */
+    .login-left {
+      width: 50%;
+      background: #111111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 48px;
+    }
+    .login-brand {
+      font-size: 42px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+    }
+    .login-brand span { color: #C9A96E; }
+    .login-fashion {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      color: rgba(255,255,255,.35);
+      margin-bottom: 40px;
+    }
+    .login-tagline {
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(255,255,255,.5);
+      text-align: center;
+      line-height: 1.6;
+      max-width: 280px;
+    }
+    .login-deco {
+      margin-top: 48px;
+      display: flex;
+      gap: 8px;
+    }
+    .login-deco-dot {
+      width: 6px; height: 6px;
+      background: rgba(255,255,255,.15);
+      border-radius: 50%;
+    }
+    .login-deco-dot.active { background: #C9A96E; }
+
+    /* ─── RIGHT PANEL ─── */
+    .login-right {
+      width: 50%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 48px;
+    }
+    .login-form-wrap {
+      width: 100%;
+      max-width: 380px;
+    }
+    .login-form-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: #1A1A1A;
+      letter-spacing: -.02em;
+      margin-bottom: 6px;
+    }
+    .login-form-sub {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 36px;
+    }
+
+    .lf-group { margin-bottom: 20px; }
+    .lf-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #888;
+      margin-bottom: 7px;
+    }
+    .lf-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #E5E7EB;
+      background: #FAFAF8;
+      font-size: 14px;
+      color: #1A1A1A;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .lf-input:focus {
+      border-color: #C9A96E;
+      background: #fff;
+    }
+    .lf-input::placeholder { color: #bbb; }
+
+    .lf-btn {
+      width: 100%;
+      padding: 13px;
+      background: #1A1A1A;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      border: none;
+      cursor: pointer;
+      transition: background .22s;
+      letter-spacing: .02em;
+      margin-top: 8px;
+    }
+    .lf-btn:hover { background: #C9A96E; }
+
+    .lf-error {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #FEF2F2;
+      border-left: 3px solid #E63946;
+      font-size: 13px;
+      color: #E63946;
+    }
+
+    @media (max-width: 768px) {
+      .login-left { display: none; }
+      .login-right { width: 100%; padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT -->
+  <div class="login-left">
+    <div class="login-brand">Stitch<span>Spot</span></div>
+    <div class="login-fashion">Fashion &amp; Tailoring</div>
+    <div class="login-tagline">Manage your store with ease.</div>
+    <div class="login-deco">
+      <div class="login-deco-dot active"></div>
+      <div class="login-deco-dot"></div>
+      <div class="login-deco-dot"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <h1 class="login-form-title">Admin Sign In</h1>
+      <p class="login-form-sub">Enter your credentials to continue.</p>
+
+      <form action="{{route('admin.auth')}}" method="post">
+        @csrf
+
+        <div class="lf-group">
+          <label class="lf-label" for="email">Email Address</label>
+          <input type="email" id="email" name="email" class="lf-input" placeholder="admin@stitchspot.com" required>
         </div>
-  
- 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-  </body>
+
+        <div class="lf-group">
+          <label class="lf-label" for="password">Password</label>
+          <input type="password" id="password" name="password" class="lf-input" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="lf-btn">Sign In</button>
+
+        @if(session('error'))
+          <div class="lf-error">{{ session('error') }}</div>
+        @endif
+      </form>
+    </div>
+  </div>
+
+</body>
 </html>

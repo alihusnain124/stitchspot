@@ -91,7 +91,7 @@ Route::post('/complete',[FrontController::class,'complete']);
 
   /////tailor payment from admin
 
-  Route::get('stripe_pay_tailor/{id}/{user_id}/{price}', [StripePaymentController::class, 'stripe_pay_tailor'])->name('stripe_pay_tailor');
+  Route::get('stripe_pay_tailor/{id}/{user_id}', [StripePaymentController::class, 'stripe_pay_tailor'])->name('stripe_pay_tailor');
   Route::post('stripe_pay_tailor', [StripePaymentController::class, 'stripePost_pay_tailor'])->name('stripe_pay_tailor.post');
      
 
@@ -118,6 +118,7 @@ Route::post('/complete',[FrontController::class,'complete']);
  
     Route::group(["middleware"=>"admin_auth"],function(){
     Route::get('/admin/dashboard',[AdminController::class,'dashboard']);
+    Route::get('/admin/stats',[AdminController::class,'statsApi']);
     Route::get('/admin/logout', function () {
         session()->forget('admin_login');
         session()->forget('admin_id');

@@ -1,68 +1,65 @@
-@extends('admin/layout');
+@extends('admin/layout')
 @section('title','Coupon')
+@section('page_title','Coupons')
 @section('coupon_select','active')
-@section('add')
+@section('content')
 
-       
-        <div class="page-container">
-       
-          <header class="header">
-            <p>Welcome {{session()->get('admin_email')}}</p>
-            <a class='alii' href="{{url('/admin/logout')}}"><button class='btn btn-danger '>Logout</button></a>
-        </header>
-           
-            <div class="main-content">
-              @if (session('message'))
-              <div class="alert alert-success mx-5" role='alert'>
-              {{session('message')}}
-              </div>
-             @endif
-                
-            <h1 class="mx-5">Coupon</h1>
-            <a href="{{url('/admin/coupon/add_coupon')}}"><button type="button" class="btn btn-outline-success mx-5 mt-3">Add Coupon</button></a>
-      
-            <div class="row">
-                <div class="col-md-11">
-                    <table class="table  table-borderless mt-4 mx-5 " style="border-radius: 10px;">
-                        <thead class="table-dark">
-                          <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Code</th>
-                            <th scope="col">Value</th>
-                            <th scope="col">status</th>
-                            <th scope="col">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach ($data as $list)
-                          <tr>
-                              <td>{{$list->id}}</td>
-                              <td>{{$list->title}}</td>
-                              <td>{{$list->code}}</td>
-                              <td>{{$list->value}}</td>
-                              <td>
-                                  @if ($list->status==1)
-                                  <a href="{{url('/admin/coupon/status/0')}}/{{$list->id}}"><button class='btn btn-info'>Active</button></a>
-                                  @elseif($list->status==0) 
-                                   <a href="{{url('/admin/coupon/status/1')}}/{{$list->id}}"><button class='btn btn-warning'>Deactive</button></a>
-                                  @endif
-                              </td>
-                              <td>
-                                  <a href="{{url('/admin/coupon/add_coupon/')}}/{{$list->id}}"><button class='btn btn-success'>Edit</button></a>
-                                 
-                                  <a href="{{url('/admin/coupon/delete/')}}/{{$list->id}}"><button class='btn btn-danger'>Delete</button></a>
-                              </td>
-                          </tr>
-                          @endforeach
-                        </tbody>
-                      </table>
-                </div>
+<div class="admin-card">
+  <div class="admin-card-header">
+    <span class="admin-card-title">All Coupons</span>
+    <a href="{{url('/admin/coupon/add_coupon')}}" class="btn-adm btn-adm-dark">
+      <i class="fa-solid fa-plus"></i> Add Coupon
+    </a>
+  </div>
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Code</th>
+          <th>Value</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($data as $list)
+        <tr>
+          <td>{{$list->id}}</td>
+          <td style="font-weight:500;">{{$list->title}}</td>
+          <td>
+            <span style="font-family:monospace;background:#F4F2EF;padding:2px 8px;font-size:12px;letter-spacing:.05em;">
+              {{$list->code}}
+            </span>
+          </td>
+          <td>{{$list->value}}</td>
+          <td>
+            @if ($list->status==1)
+              <a href="{{url('/admin/coupon/status/0')}}/{{$list->id}}">
+                <span class="badge-on" style="cursor:pointer;">Active</span>
+              </a>
+            @elseif($list->status==0)
+              <a href="{{url('/admin/coupon/status/1')}}/{{$list->id}}">
+                <span class="badge-off" style="cursor:pointer;">Inactive</span>
+              </a>
+            @endif
+          </td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <a href="{{url('/admin/coupon/add_coupon/')}}/{{$list->id}}" class="btn-adm btn-adm-ghost">
+                <i class="fa-solid fa-pen"></i> Edit
+              </a>
+              <a href="{{url('/admin/coupon/delete/')}}/{{$list->id}}" class="btn-adm btn-adm-red">
+                <i class="fa-solid fa-trash"></i> Delete
+              </a>
             </div>
-                
-            </div>
-       
-        </div>
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+  </div>
+</div>
 
-    </div>
- @endsection
+@endsection
