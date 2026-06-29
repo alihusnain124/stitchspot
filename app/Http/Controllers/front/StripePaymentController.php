@@ -36,6 +36,18 @@ public function stripe(Request $req)
         $data['user_type'] = 'Not Reg';
     }
 
+    try {
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+        $paymentIntent = Stripe\PaymentIntent::create([
+            'amount' => $req->input('total_price') * 100,
+            'currency' => 'pkr',
+            'description' => 'Checkout Payment',
+        ]);
+        $data['client_secret'] = $paymentIntent->client_secret;
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', $e->getMessage());
+    }
+
     return view('front.stripe', $data);
 
 }
@@ -46,13 +58,17 @@ public function stripe(Request $req)
 */
 public function stripePost(Request $req)
 {
-Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-Stripe\Charge::create ([
-"amount" => $req->total_price * 100,
-"currency" => "pkr",
-"source" => $req->stripeToken,
-"description" => "New payment has been recieved"
-]);
+try {
+    Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+    $paymentIntent = Stripe\PaymentIntent::retrieve($req->stripeToken); // Passed from frontend
+
+    if ($paymentIntent->status !== 'succeeded') {
+        return redirect()->back()->with('error', 'Payment was not successful.');
+    }
+} catch (\Exception $e) {
+    return redirect()->back()->with('error', $e->getMessage());
+}
+
 Session::flash('success', 'Payment successful!');
 
 
@@ -142,11 +158,20 @@ return redirect('/order_placed')->with('msg','Please add items to cart');
 
 
 
-public function stripe_pay(Request $req,$id,$price){
+public function stripe_pay(Request $req, $id){
+
+    // Fetch the price from the database – never trust URL params for amounts
+    $order = DB::table('confirm_orders')->where('id', $id)->first();
+
+    if (!$order) {
+        return redirect()->back()->with('error', 'Order not found.');
+    }
+
+    $price = $order->price;
 
     $data = [
-        'id' => $id,
-        'price'=>$price
+        'id'    => $id,
+        'price' => $price
     ];
 
     if ($req->session()->has('FRONT_USER_LOGIN')) {
@@ -155,6 +180,18 @@ public function stripe_pay(Request $req,$id,$price){
     } else {
         $data['user_id'] = getUserTempid();
         $data['user_type'] = 'Not Reg';
+    }
+
+    try {
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+        $paymentIntent = Stripe\PaymentIntent::create([
+            'amount' => $price * 100,
+            'currency' => 'pkr',
+            'description' => 'Tailor Order Payment',
+        ]);
+        $data['client_secret'] = $paymentIntent->client_secret;
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', $e->getMessage());
     }
 
     return view('front.stripe_pay', $data);
@@ -167,13 +204,17 @@ public function stripe_pay(Request $req,$id,$price){
 */
 public function stripePost_pay(Request $req)
 {
-Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-Stripe\Charge::create ([
-"amount" => $req->price * 100,
-"currency" => "pkr",
-"source" => $req->stripeToken,
-"description" => "New payment has been recieved"
-]);
+try {
+    Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+    $paymentIntent = Stripe\PaymentIntent::retrieve($req->stripeToken);
+
+    if ($paymentIntent->status !== 'succeeded') {
+        return redirect()->back()->with('error', 'Payment was not successful.');
+    }
+} catch (\Exception $e) {
+    return redirect()->back()->with('error', $e->getMessage());
+}
+
 Session::flash('success', 'Payment successful!');
 
 
@@ -227,7 +268,17 @@ public function stripe_pay_tailor(Request $req,$id,$user_id,$price){
         'price'=>$price
     ];
 
-   
+    try {
+        Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+        $paymentIntent = Stripe\PaymentIntent::create([
+            'amount' => $price * 100,
+            'currency' => 'pkr',
+            'description' => 'Admin Tailor Payout',
+        ]);
+        $data['client_secret'] = $paymentIntent->client_secret;
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', $e->getMessage());
+    }
 
     return view('admin.stripe_pay_tailor', $data);
 
@@ -239,13 +290,17 @@ public function stripe_pay_tailor(Request $req,$id,$user_id,$price){
 */
 public function stripePost_pay_tailor(Request $req)
 {
-Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-Stripe\Charge::create ([
-"amount" => $req->price * 100,
-"currency" => "pkr",
-"source" => $req->stripeToken,
-"description" => "New payment has been recieved"
-]);
+try {
+    Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+    $paymentIntent = Stripe\PaymentIntent::retrieve($req->stripeToken);
+
+    if ($paymentIntent->status !== 'succeeded') {
+        return redirect()->back()->with('error', 'Payment was not successful.');
+    }
+} catch (\Exception $e) {
+    return redirect()->back()->with('error', $e->getMessage());
+}
+
 Session::flash('success', 'Payment successful!');
 
 

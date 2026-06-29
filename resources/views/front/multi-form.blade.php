@@ -80,7 +80,7 @@
    <div class="absolute inset-0 opacity-10"
         style="background-image:repeating-linear-gradient(45deg,#C9A96E 0,#C9A96E 1px,transparent 0,transparent 50%);background-size:20px 20px;"></div>
    <div class="relative z-10 max-w-[1280px] mx-auto px-4 lg:px-8">
-      <p class="font-body text-[10.5px] tracking-[4px] uppercase text-gold mb-2">
+      <p class="font-body text-[10.5px] tracking-[4px] uppercase text-[#C9A96E] mb-2">
          <a href="{{ url('/customers_dashboard') }}" class="hover:text-white transition-colors">Dashboard</a>
          <span class="mx-2 text-white/30">/</span> Add Service
       </p>
@@ -115,19 +115,19 @@
             <div class="space-y-5">
                <div>
                   <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">
-                     Service Title <span class="text-gold">*</span>
+                     Service Title <span class="text-[#C9A96E]">*</span>
                   </label>
                   <input type="text" name="service_title" placeholder="e.g. Custom Shalwar Kameez Stitching"
-                     class="w-full h-11 px-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+                     class="w-full h-[48px] px-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors leading-[48px] py-0">
                </div>
 
                <div>
                   <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">
-                     Category <span class="text-gold">*</span>
+                     Category <span class="text-[#C9A96E]">*</span>
                   </label>
                   <div class="relative">
                      <select name="category"
-                        class="w-full h-11 px-4 pr-9 font-body text-sm text-[#1A1A1A] bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors appearance-none cursor-pointer">
+                        class="w-full h-[48px] px-4 pr-9 font-body text-sm text-[#1A1A1A] bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors appearance-none cursor-pointer py-0">
                         <option value="">Select a category…</option>
                         @foreach($category as $item)
                         <option value="{{ $item->id }}">{{ $item->category_name }}</option>
@@ -179,45 +179,45 @@
             <div class="space-y-5">
                <div class="grid grid-cols-2 gap-4">
                   <div>
-                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Min Price (Rs) <span class="text-gold">*</span></label>
-                     <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-body text-[12px] text-gray-400">Rs</span>
+                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Min Price (Rs) <span class="text-[#C9A96E]">*</span></label>
+                     <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
+                        <span class="font-body text-[12px] text-gray-400 mr-2">Rs</span>
                         <input type="number" name="min_price" placeholder="500"
-                           class="w-full h-11 pl-9 pr-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+                           class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
                   <div>
-                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Max Price (Rs) <span class="text-gold">*</span></label>
-                     <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 font-body text-[12px] text-gray-400">Rs</span>
+                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Max Price (Rs) <span class="text-[#C9A96E]">*</span></label>
+                     <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
+                        <span class="font-body text-[12px] text-gray-400 mr-2">Rs</span>
                         <input type="number" name="max_price" placeholder="5000"
-                           class="w-full h-11 pl-9 pr-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+                           class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
                </div>
 
                <div class="grid grid-cols-2 gap-4">
                   <div>
-                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Min Delivery (days) <span class="text-gold">*</span></label>
-                     <div class="relative">
-                        <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-[11px] pointer-events-none"></i>
+                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Min Delivery (days) <span class="text-[#C9A96E]">*</span></label>
+                     <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
+                        <i class="fa-solid fa-clock text-gray-300 text-[11px] mr-2"></i>
                         <input type="number" name="min_delivery_time" placeholder="3"
-                           class="w-full h-11 pl-9 pr-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+                           class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
                   <div>
-                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Max Delivery (days) <span class="text-gold">*</span></label>
-                     <div class="relative">
-                        <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-[11px] pointer-events-none"></i>
+                     <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Max Delivery (days) <span class="text-[#C9A96E]">*</span></label>
+                     <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
+                        <i class="fa-solid fa-clock text-gray-300 text-[11px] mr-2"></i>
                         <input type="number" name="max_delivery_time" placeholder="14"
-                           class="w-full h-11 pl-9 pr-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors">
+                           class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
                </div>
 
                {{-- Price guide note --}}
                <div class="bg-gold/8 border border-gold/20 px-4 py-3 flex items-start gap-3" style="background:rgba(201,169,110,0.06)">
-                  <i class="fa-solid fa-circle-info text-gold text-[13px] mt-0.5 shrink-0"></i>
+                  <i class="fa-solid fa-circle-info text-[#C9A96E] text-[13px] mt-0.5 shrink-0"></i>
                   <p class="font-body text-[12.5px] text-gray-500">Set a competitive range. Customers will see "Starting at Rs [min]".</p>
                </div>
             </div>
@@ -241,7 +241,7 @@
             <div class="space-y-5">
                <div>
                   <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">
-                     Service Description <span class="text-gold">*</span>
+                     Service Description <span class="text-[#C9A96E]">*</span>
                   </label>
                   <textarea name="desc" rows="6" placeholder="Describe your service in detail — what's included, your process, quality guarantees…"
                      class="w-full px-4 py-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors resize-none"></textarea>
@@ -271,12 +271,12 @@
 
             <div class="experiences-group">
                <div class="experience-item">
-                  <label class="block w-full border-2 border-dashed border-gray-200 hover:border-gold transition-colors cursor-pointer p-10 text-center"
+                  <label class="block w-full border-2 border-dashed border-gray-200 hover:border-[#C9A96E] transition-colors cursor-pointer p-10 text-center"
                          id="drop-zone">
                      <i class="fa-solid fa-cloud-arrow-up text-[40px] text-gray-300 mb-3 block"></i>
                      <p class="font-body text-[13px] text-gray-400 mb-1">Click to upload or drag &amp; drop</p>
                      <p class="font-body text-[11px] text-gray-300">JPG, PNG, WEBP — recommended 800×600px</p>
-                     <p id="file-name" class="font-body text-[12px] text-gold mt-3 hidden"></p>
+                     <p id="file-name" class="font-body text-[12px] text-[#C9A96E] mt-3 hidden"></p>
                      <input type="file" name="image" accept="image/*" class="hidden"
                         onchange="document.getElementById('file-name').textContent = this.files[0]?.name; document.getElementById('file-name').classList.remove('hidden')">
                   </label>
@@ -301,19 +301,19 @@
 
             <div class="bg-[#F9F8F6] border border-gray-100 p-6 space-y-3 mb-8">
                <div class="flex items-center gap-3">
-                  <i class="fa-solid fa-circle-check text-gold text-[14px] w-5"></i>
+                  <i class="fa-solid fa-circle-check text-[#C9A96E] text-[14px] w-5"></i>
                   <span class="font-body text-[13.5px] text-gray-600">Service title, category &amp; tags filled</span>
                </div>
                <div class="flex items-center gap-3">
-                  <i class="fa-solid fa-circle-check text-gold text-[14px] w-5"></i>
+                  <i class="fa-solid fa-circle-check text-[#C9A96E] text-[14px] w-5"></i>
                   <span class="font-body text-[13.5px] text-gray-600">Pricing and delivery time set</span>
                </div>
                <div class="flex items-center gap-3">
-                  <i class="fa-solid fa-circle-check text-gold text-[14px] w-5"></i>
+                  <i class="fa-solid fa-circle-check text-[#C9A96E] text-[14px] w-5"></i>
                   <span class="font-body text-[13.5px] text-gray-600">Description and requirements added</span>
                </div>
                <div class="flex items-center gap-3">
-                  <i class="fa-solid fa-circle-check text-gold text-[14px] w-5"></i>
+                  <i class="fa-solid fa-circle-check text-[#C9A96E] text-[14px] w-5"></i>
                   <span class="font-body text-[13.5px] text-gray-600">Cover photo uploaded</span>
                </div>
             </div>
@@ -323,7 +323,7 @@
                   <i class="fa-solid fa-arrow-left text-[9px]"></i> Back
                </a>
                <input type="submit" name="complete" value="Publish Service"
-                  class="btn-complete inline-flex items-center gap-2 bg-gold text-[#1A1A1A] font-body font-semibold text-[11px] tracking-[0.2em] uppercase px-10 h-11 hover:bg-[#A88948] transition-colors cursor-pointer border-none">
+                  class="btn-complete inline-flex items-center justify-center gap-2 bg-[#1A1A1A] text-white font-body font-semibold text-[11px] tracking-[0.2em] uppercase px-10 h-11 hover:bg-[#C9A96E] transition-colors cursor-pointer border-none shadow-md">
             </div>
          </div>
 

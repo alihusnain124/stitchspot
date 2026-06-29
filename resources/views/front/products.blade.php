@@ -3,16 +3,33 @@
 
 @section('content')
 
-{{-- Page header --}}
-<div class="bg-[#F9F8F6] border-b border-[#E8E8E8] py-14 text-center">
-   <p class="font-body text-[12px] text-gray-400 mb-4">
-      <a href="{{ url('/') }}" class="hover:text-gold transition-colors">Home</a>
-      <span class="mx-2 text-gray-300">/</span>
-      <span>All Products</span>
-   </p>
-   <h1 class="font-display text-[clamp(30px,4vw,48px)] font-semibold text-[#1A1A1A] mb-2">Our Collection</h1>
-   <p class="font-body text-[14px] text-gray-400">{{ $product->count() }} pieces curated for you</p>
-</div>
+{{-- Hero Banner --}}
+<section class="relative overflow-hidden bg-[#111]" style="min-height:460px">
+   <img src="{{ asset('front-assets/images/f3.jpg') }}"
+        alt="Our Collection"
+        class="absolute inset-0 w-full h-full object-cover object-center opacity-45">
+   <div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.6) 100%)"></div>
+
+   <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-24" style="min-height:460px">
+
+      <p class="font-body text-[10px] tracking-[5px] uppercase text-gold mb-5">New Arrivals &amp; Classics</p>
+
+      <h1 class="font-display text-white text-[clamp(38px,5.5vw,72px)] font-semibold leading-tight mb-5">
+         Our Collection
+      </h1>
+
+      <p class="font-body text-white/55 text-[15px] leading-relaxed mb-6 max-w-[480px]">
+         Discover premium fashion pieces — from everyday wear to special occasion outfits, curated just for you.
+      </p>
+
+      <div class="flex items-center gap-3 mb-2">
+         <a href="{{ url('/') }}" class="font-body text-[11px] tracking-[2px] uppercase text-white/40 hover:text-gold transition-colors">Home</a>
+         <span class="text-white/25 text-xs">›</span>
+         <span class="font-body text-[11px] tracking-[2px] uppercase text-white/65">All Products</span>
+      </div>
+      <p class="font-body text-[12px] text-white/30 italic mt-3">{{ $product->count() }} pieces curated for you</p>
+   </div>
+</section>
 
 {{-- Products grid --}}
 <section class="py-14 bg-white">
@@ -34,7 +51,8 @@
             $mrp    = $attr ? $attr->mrp : 0;
             $qty    = $attr ? $attr->qty : 0;
             $isSale = $attr && $attr->price > 0 && $attr->price < $attr->mrp;
-            $isOut  = $qty == 0;
+            $isOut     = $qty == 0;
+            $wishlisted = isset($wishlist_ids) && in_array($item->id, $wishlist_ids);
          @endphp
 
          <div class="group relative">
@@ -50,8 +68,9 @@
                @endif
 
                {{-- Wishlist --}}
-               <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer z-10 opacity-0 group-hover:opacity-100 transition-all hover:bg-[#E63946] hover:text-white text-gray-500 text-[13px] border-none">
-                  <i class="fa-regular fa-heart"></i>
+               <button onclick="toggleWishlist(this, {{ $item->id }})"
+                  class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer z-30 opacity-0 group-hover:opacity-100 transition-all border-none {{ $wishlisted ? 'text-[#E63946]' : 'text-gray-400 hover:text-[#E63946]' }}">
+                  <i class="{{ $wishlisted ? 'fa-solid' : 'fa-regular' }} fa-heart text-[13px]"></i>
                </button>
 
                {{-- Image --}}

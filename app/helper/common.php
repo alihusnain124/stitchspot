@@ -69,6 +69,12 @@ function total_cart_items(){
 	return $cart_total;
 }
 
+function total_wishlist_items(){
+   if(!session()->has('FRONT_USER_LOGIN')) return 0;
+   $user_id = session()->get('FRONT_USER_LOGIN');
+   return DB::table('wishlists')->where('user_id', $user_id)->count();
+}
+
 function prx($result){
    echo '<pre>';
    print_r($result);

@@ -4,19 +4,46 @@
 @section('content')
 
 {{-- ── Hero ── --}}
-<section class="relative overflow-hidden bg-[#1A1A1A]" style="min-height:420px">
+<section class="relative overflow-hidden bg-[#111]" style="min-height:560px">
    <img src="{{ asset('front-assets/images/slider-bg.jpg') }}"
         alt="Services hero"
-        class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
-   <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-28">
-      <p class="font-body text-[10.5px] tracking-[4px] uppercase text-gold mb-5">Crafted With Expertise</p>
-      <h1 class="font-display text-white text-[clamp(36px,5vw,68px)] font-semibold leading-tight mb-5">
+        class="absolute inset-0 w-full h-full object-cover object-top opacity-45">
+   {{-- gradient to darken bottom --}}
+   <div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.6) 100%)"></div>
+
+   <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-24" style="min-height:560px">
+
+      <p class="font-body text-[10px] tracking-[5px] uppercase text-gold mb-5">Crafted With Expertise</p>
+
+      <h1 class="font-display text-white text-[clamp(38px,5.5vw,72px)] font-semibold leading-tight mb-5">
          Unlock Your Style<br>With <span class="text-gold">StitchSpot</span>
       </h1>
-      <p class="font-body text-white/55 text-base mb-9 max-w-md">"Elevate Your Style with Custom Tailoring"</p>
+
+      <p class="font-body text-white/55 text-[15px] leading-relaxed mb-10 max-w-[480px]">
+         Premium custom tailoring &amp; fashion — crafted to fit you perfectly, every single time.
+      </p>
+
+      {{-- Stats row --}}
+      <div class="flex items-center gap-10 mb-10 pb-10 border-b border-white/15">
+         <div class="text-center">
+            <span class="font-display text-gold text-[38px] font-semibold leading-none block">500+</span>
+            <span class="font-body text-white/45 text-[10px] uppercase tracking-[2.5px] mt-1 block">Happy Clients</span>
+         </div>
+         <div class="w-px h-12 bg-white/15"></div>
+         <div class="text-center">
+            <span class="font-display text-gold text-[38px] font-semibold leading-none block">50+</span>
+            <span class="font-body text-white/45 text-[10px] uppercase tracking-[2.5px] mt-1 block">Expert Tailors</span>
+         </div>
+         <div class="w-px h-12 bg-white/15"></div>
+         <div class="text-center">
+            <span class="font-display text-gold text-[38px] font-semibold leading-none block">5 ★</span>
+            <span class="font-body text-white/45 text-[10px] uppercase tracking-[2.5px] mt-1 block">Avg Rating</span>
+         </div>
+      </div>
+
       <a href="#services-grid"
-         class="inline-flex items-center gap-2 bg-gold text-[#1A1A1A] font-body font-semibold text-[11px] tracking-[0.2em] uppercase px-8 h-11 hover:bg-[#A88948] transition-colors">
-         Explore Services
+         class="inline-flex items-center gap-3 bg-gold text-[#111] font-body font-semibold text-[11px] tracking-[0.22em] uppercase px-9 h-12 hover:bg-[#A88948] transition-colors">
+         Explore Services <i class="fa-solid fa-arrow-right text-[10px]"></i>
       </a>
    </div>
 </section>

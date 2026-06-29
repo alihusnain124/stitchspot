@@ -14,9 +14,6 @@
    {{-- Font Awesome --}}
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-   {{-- SweetAlert2 --}}
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
    {{-- jQuery --}}
    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -45,6 +42,30 @@
       input  { outline: none; }
       input:focus { outline: none; }
    </style>
+   <style>
+      #ss-toast-container{position:fixed;top:24px;right:24px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
+      .ss-toast{pointer-events:all;display:flex;align-items:flex-start;gap:12px;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.13);padding:15px 16px;min-width:280px;max-width:380px;font-family:'DM Sans',sans-serif;opacity:0;transform:translateX(30px);transition:opacity .3s,transform .3s;position:relative;overflow:hidden;}
+      .ss-toast.ss-show{opacity:1;transform:translateX(0);}
+      .ss-toast-bar{position:absolute;bottom:0;left:0;height:2px;transition-property:width;transition-timing-function:linear;}
+   </style>
+   <script>
+   window.SS=(function(){
+      function _cont(){var c=document.getElementById('ss-toast-container');if(!c){c=document.createElement('div');c.id='ss-toast-container';document.body.appendChild(c);}return c;}
+      var _cfg={success:{border:'#C9A96E',bg:'#C9A96E',sym:'✓'},error:{border:'#E63946',bg:'#E63946',sym:'✕'},warning:{border:'#F59E0B',bg:'#F59E0B',sym:'!'}};
+      function toast(type,title,text,timer){
+         timer=timer||3500;var c=_cfg[type]||_cfg.warning;
+         var el=document.createElement('div');el.className='ss-toast';el.style.borderLeft='3px solid '+c.border;
+         el.innerHTML='<div style="width:24px;height:24px;border-radius:50%;background:'+c.bg+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">'+c.sym+'</div>'
+            +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#1A1A1A;line-height:1.3">'+title+'</div>'+(text?'<div style="font-size:12px;color:#888;margin-top:3px">'+text+'</div>':'')+'</div>'
+            +'<button onclick="this.closest(\'.ss-toast\').remove()" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:19px;line-height:1;padding:0;flex-shrink:0">&times;</button>'
+            +'<div class="ss-toast-bar" style="background:'+c.border+';width:100%;transition-duration:'+timer+'ms"></div>';
+         _cont().appendChild(el);
+         requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('ss-show');el.querySelector('.ss-toast-bar').style.width='0%';});});
+         setTimeout(function(){el.classList.remove('ss-show');setTimeout(function(){el&&el.remove();},320);},timer);
+      }
+      return{toast:toast};
+   })();
+   </script>
 </head>
 
 <body class="bg-[#F5F4F2] min-h-screen flex items-center justify-center p-4">
@@ -166,10 +187,10 @@
             type: 'post',
             success: function(result) {
                if (result.error) {
-                  Swal.fire({ title: 'Oops…', text: result.error, icon: 'warning' });
+                  SS.toast('warning', 'Oops…', result.error);
                   btn.html('Sign In &nbsp;<i class="fa-solid fa-arrow-right text-[9px]"></i>').prop('disabled', false);
                } else {
-                  Swal.fire({ title: 'Welcome back!', text: result.msg, icon: 'success', timer: 1500, showConfirmButton: false });
+                  SS.toast('success', 'Welcome back!', result.msg, 1500);
                   setTimeout(() => { window.location.href = '/'; }, 1600);
                }
             },

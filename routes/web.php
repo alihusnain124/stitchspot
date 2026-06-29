@@ -64,6 +64,8 @@ use  App\Http\Controllers\front\StripePaymentController;
   Route::get('/search_service',[FrontController::class,'search_service']);
   Route::get('/recommended_products',[FrontController::class,'get_products']);
   Route::get('/account_no',[FrontController::class,'account_no']);
+  Route::post('/wishlist/toggle',[FrontController::class,'wishlistToggle'])->name('wishlist.toggle');
+  Route::get('/wishlist',[FrontController::class,'wishlist'])->name('wishlist');
   
   
 
@@ -84,7 +86,7 @@ Route::post('/complete',[FrontController::class,'complete']);
 
   /////payment for user tailor's order
 
-  Route::get('stripe_pay/{id}/{price}', [StripePaymentController::class, 'stripe_pay'])->name('stripe_pay');
+  Route::get('stripe_pay/{id}', [StripePaymentController::class, 'stripe_pay'])->name('stripe_pay');
   Route::post('stripe_pay', [StripePaymentController::class, 'stripePost_pay'])->name('stripe_pay.post');
 
   /////tailor payment from admin
