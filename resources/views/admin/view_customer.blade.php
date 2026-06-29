@@ -1,86 +1,72 @@
-@extends('admin/layout');
+@extends('admin/layout')
 @section('title','View Customer')
-@section('add')
+@section('page_title','Customer Details')
+@section('customer_select','active')
+@section('content')
 
-
-    <div class="page-container">
-
-        <header class="header">
-            <p>Welcome {{session()->get('admin_email')}}</p>
-            <a class='alii' href="{{url('/admin/logout')}}"><button class='btn btn-danger '>Logout</button></a>
-        </header>
-        <div class="main-content">
-             <h1 class='mx-5'>Customer Details</h1>
-             <a href="{{url('/admin/customer')}}"><button type="button" class="btn btn-outline-success mx-5 my-4 ">Back</button></a> 
-     
-  
-    <div class="col-lg-11 m-5">
-        <table class="table table-border table-data3 ">
-            <thead>
-                <tr>
-    
-                    <th>Feild</th>
-                    <th>Detail</th>
-
-                </tr>
-            </thead>
-            <tbody>
-               <tr > 
-                <td>Name</td>
-                <td>{{$data->name}}</td>
-               </tr>
-
-               <tr>
-                <td>Email</td>
-                <td>{{$data->email}}</td>
-               </tr>
-
-               <tr>
-                <td>Phone No</td>
-                <td>{{$data->mobile}}</td>
-               </tr>
-
-               <tr>
-                <td>Address</td>
-                <td>{{$data->address}}</td>
-               </tr>
-
-               <tr>
-                <td>Bio</td>
-                <td>{{$data->bio}}</td>
-               </tr>
-
-               <tr>
-                <td>Image</td>
-                <td> <img style='height: 100px' src="{{asset('/storage/media/customer/'.$data->image)}}" class="img-fluid" alt=""></td>
-               </tr>
-
-               <tr>
-                <td>Is Tailor</td>
-                <td>{{$data->tailor}}</td>
-               </tr>
-
-               <tr>
-                <td>About</td>
-                <td>{{$data->about}}</td>
-               </tr>
-                  
-               <tr>
-                <td>Status</td>
-                <td>{{$data->status}}</td>
-               </tr>
-               <tr>
-                <td>Created</td>
-                <td>{{\Carbon\Carbon::parse($data->created_at)->format('d-m-Y h:m:s')}}</td>
-               </tr>
-               <tr>
-                <td>Updated</td>
-                <td>{{\Carbon\Carbon::parse($data->updated_at)->format('d-m-Y h:m:s')}}</td>
-               </tr>
-
-            </tbody>
-        </table>
-    </div>
-    <div>
+<div class="mb-3">
+  <a href="{{url('/admin/customer')}}" class="btn-adm btn-adm-ghost">
+    <i class="fa-solid fa-arrow-left"></i> Back to Customers
+  </a>
 </div>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <span class="admin-card-title">Customer Profile</span>
+  </div>
+  <div class="admin-card-body">
+    <div class="row g-4">
+      <div class="col-md-3 text-center">
+        <img style="width:120px;height:120px;object-fit:cover;border:2px solid #E5E7EB;"
+             src="{{asset('/storage/media/customer/'.$data->image)}}" alt="Customer Image">
+        <div style="margin-top:12px;font-weight:600;font-size:15px;">{{$data->name}}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px;">{{$data->email}}</div>
+        @if($data->tailor == 'yes' || $data->tailor == 1)
+          <div style="margin-top:8px;"><span class="badge-info">Tailor</span></div>
+        @endif
+      </div>
+      <div class="col-md-9">
+        <table class="admin-table">
+          <tbody>
+            <tr>
+              <td style="color:#888;width:160px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Phone</td>
+              <td>{{$data->mobile}}</td>
+            </tr>
+            <tr>
+              <td style="color:#888;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Address</td>
+              <td>{{$data->address}}</td>
+            </tr>
+            <tr>
+              <td style="color:#888;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Bio</td>
+              <td>{{$data->bio}}</td>
+            </tr>
+            <tr>
+              <td style="color:#888;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;">About</td>
+              <td>{{$data->about}}</td>
+            </tr>
+            <tr>
+              <td style="color:#888;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Status</td>
+              <td>
+                @if($data->status == 1)
+                  <span class="badge-on">Active</span>
+                @else
+                  <span class="badge-off">Inactive</span>
+                @endif
+              </td>
+            </tr>
+            <tr>
+              <td style="color:#888;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Created</td>
+              <td style="color:#888;font-size:12px;">{{\Carbon\Carbon::parse($data->created_at)->format('d-m-Y h:m:s')}}</td>
+            </tr>
+            <tr>
+              <td style="color:#888;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Updated</td>
+              <td style="color:#888;font-size:12px;">{{\Carbon\Carbon::parse($data->updated_at)->format('d-m-Y h:m:s')}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection

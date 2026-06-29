@@ -260,24 +260,35 @@ return redirect('/profile/'.$user_id)->with('msg',"Your tailor's order has been 
 
 
 
-public function stripe_pay_tailor(Request $req,$id,$user_id,$price){
+public function stripe_pay_tailor(Request $req, $id, $user_id){
+
+    // Fetch price from DB — never trust URL parameters for amounts
+    $order = DB::table('confirm_orders')->where('id', $id)->first();
+
+    if (!$order) {
+        return redirect('/admin/tailor_order')->with('msg', 'Order not found.');
+    }
+
+    $fullPrice  = $order->price;
+    $price      = round($fullPrice * 0.75, 2); // Admin pays 75% of the total
 
     $data = [
-        'id' => $id,
-        'user_id'=>$user_id,
-        'price'=>$price
+        'id'        => $id,
+        'user_id'   => $user_id,
+        'price'     => $price,
+        'fullPrice' => $fullPrice,
     ];
 
     try {
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         $paymentIntent = Stripe\PaymentIntent::create([
-            'amount' => $price * 100,
-            'currency' => 'pkr',
-            'description' => 'Admin Tailor Payout',
+            'amount'      => (int)($price * 100),
+            'currency'    => 'pkr',
+            'description' => 'Admin Tailor Payout — Order #'.$id,
         ]);
         $data['client_secret'] = $paymentIntent->client_secret;
     } catch (\Exception $e) {
-        return redirect()->back()->with('error', $e->getMessage());
+        return redirect('/admin/tailor_order')->with('msg', 'Stripe error: '.$e->getMessage());
     }
 
     return view('admin.stripe_pay_tailor', $data);
