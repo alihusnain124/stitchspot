@@ -1769,10 +1769,19 @@ public static function trainContentBasedModel($processedProductData, $processedU
     $model = [];
 
     foreach ($processedProductData as $productId => $productFeatures) {
+        // Skip products with empty feature vectors (e.g. deleted products still in order_details)
+        if (empty($productFeatures) || array_sum(array_map('abs', $productFeatures)) == 0) {
+            continue;
+        }
+
         foreach ($processedUserData as $userId => $userFeatures) {
+            // Skip users with empty feature vectors
+            if (empty($userFeatures) || array_sum(array_map('abs', $userFeatures)) == 0) {
+                continue;
+            }
+
             $similarityScore = self::calculateSimilarity($productFeatures, $userFeatures);
 
-            // prx($similarityScore);
             if (!isset($model[$userId])) {
                 $model[$userId] = [];
             }
@@ -1794,7 +1803,14 @@ public static function calculateSimilarity($productFeatures, $userFeatures)
     $userNorm = sqrt(array_sum(array_map(function ($x) {
         return $x * $x;
     }, $userFeatures)));
-    return $dotProduct / ($productNorm * $userNorm);
+
+    // Guard against division by zero (e.g. deleted products produce zero-norm vectors)
+    $denominator = $productNorm * $userNorm;
+    if ($denominator == 0) {
+        return 0;
+    }
+
+    return $dotProduct / $denominator;
 }
 
 
