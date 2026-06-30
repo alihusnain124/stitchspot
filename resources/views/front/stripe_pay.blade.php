@@ -16,12 +16,47 @@
 @endsection
 
 @section('content')
+{{-- Hero Banner --}}
+<section class="relative overflow-hidden bg-[#111]" style="min-height:460px">
+   <img
+      src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&q=80"
+      alt="Secure Checkout"
+      class="absolute inset-0 w-full h-full object-cover object-center opacity-45">
 
-{{-- Page Header --}}
-<div class="bg-[#F9F8F6] border-b border-[#E8E8E8] py-14 text-center">
-   <p class="font-body text-[11px] tracking-[4px] uppercase text-gray-400 mb-3">Secure Checkout</p>
-   <h1 class="font-display text-[clamp(28px,4vw,44px)] font-semibold text-[#1A1A1A]">Payment Details</h1>
-</div>
+   <div class="absolute inset-0"
+      style="background:linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%)">
+   </div>
+
+   <div class="relative z-10 flex flex-col items-center justify-center text-center px-6 py-24"
+      style="min-height:460px">
+
+      <p class="font-body text-[10px] tracking-[5px] uppercase text-gold mb-5">
+         Safe & Secure Payments
+      </p>
+
+      <h1 class="font-display text-white text-[clamp(38px,5.5vw,72px)] font-semibold leading-tight mb-5">
+         Secure Checkout
+      </h1>
+
+      <p class="font-body text-white/55 text-[15px] leading-relaxed mb-6 max-w-[480px]">
+         Complete your purchase with confidence using our secure and encrypted payment gateway.
+      </p>
+
+      <div class="flex items-center gap-3">
+         <a href="{{ url('/') }}"
+            class="font-body text-[11px] tracking-[2px] uppercase text-white/40 hover:text-gold transition-colors">
+            Home
+         </a>
+
+         <span class="text-white/25 text-xs">›</span>
+
+         <span class="font-body text-[11px] tracking-[2px] uppercase text-white/65">
+            Secure Checkout
+         </span>
+      </div>
+
+   </div>
+</section>
 
 <section class="py-14 bg-white min-h-[60vh]">
    <div class="max-w-[540px] mx-auto px-4">

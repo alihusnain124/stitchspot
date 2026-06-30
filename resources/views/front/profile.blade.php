@@ -389,7 +389,7 @@
                            <td class="px-4 py-3 text-gray-500">{{ $item->order_product_id }}</td>
                            <td class="px-4 py-3 font-semibold text-gold">Rs {{ number_format($item->price) }}</td>
                            <td class="px-4 py-3">
-                              <a href="{{ '/stripe_pay/'.$item->id.'/'.$item->price }}"
+                               <a href="{{ url('stripe_pay/' . $item->id) }}"
                                  class="inline-flex items-center gap-1.5 px-4 h-8 bg-[#1A1A1A] text-white font-body text-[10px] tracking-[0.15em] uppercase hover:bg-gray-800 transition-colors">
                                  <i class="fa-solid fa-lock text-[9px]"></i> Pay Now
                               </a>
