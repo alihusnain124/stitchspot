@@ -29,7 +29,7 @@
           <td style="font-weight:500;">{{$list->brand_name}}</td>
           <td>
             <img width="50px" height="50px" style="object-fit:cover;border:1px solid #E5E7EB;"
-                 src="{{asset('/storage/media/brand/'.$list->brand_image)}}" alt="">
+                 src="{{ str_starts_with($list->brand_image, 'http') ? $list->brand_image : asset('/storage/media/brand/'.$list->brand_image) }}" alt="">
           </td>
           <td>
             @if ($list->status==1)
@@ -57,6 +57,7 @@
       </tbody>
     </table>
   </div>
+  {{ $data->links('admin.pagination') }}
 </div>
 
 @endsection

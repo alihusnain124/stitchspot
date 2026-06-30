@@ -129,47 +129,32 @@
    <div class="max-w-[1280px] mx-auto px-4 lg:px-8">
 
       <div class="text-center mb-12">
-         <span class="block font-body text-[10.5px] tracking-[4px] uppercase text-gray-400 mb-3">Shop by Category</span>
-         <h2 class="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-[#1A1A1A]">Explore Collections</h2>
+         <span class="block font-body text-[10.5px] tracking-[4px] uppercase text-gray-400 mb-3">Shop by Brand</span>
+         <h2 class="font-display text-3xl md:text-4xl lg:text-5xl font-semibold text-[#1A1A1A]">Featured Brands</h2>
          <div class="w-12 h-0.5 bg-gold mx-auto mt-3"></div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-
-         <a href="{{ url('/category/women') }}" class="relative overflow-hidden cursor-pointer group block" style="aspect-ratio:3/4">
-            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=700&q=80&auto=format&fit=crop"
-                 alt="Women" class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700">
+      @if(isset($home_brands) && count($home_brands))
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 {{ count($home_brands) > 6 ? 'lg:grid-cols-4' : 'lg:grid-cols-3' }} gap-4">
+         @foreach($home_brands as $brand)
+         <a href="{{ url('/products?brand='.$brand->id) }}" class="relative overflow-hidden cursor-pointer group block" style="aspect-ratio:3/4">
+            @php $bImg = str_starts_with($brand->brand_image ?? '', 'http') ? $brand->brand_image : asset('/storage/media/brand/'.$brand->brand_image); @endphp
+            <img src="{{ $bImg }}"
+                 alt="{{ $brand->brand_name }}"
+                 class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700"
+                 onerror="this.src='https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=700&q=80&auto=format&fit=crop'">
             <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.05) 100%)"></div>
             <div class="absolute bottom-0 left-0 right-0 p-7 text-white">
                <span class="block font-body text-[10px] tracking-[3px] uppercase text-gold mb-1">Collection 2025</span>
-               <h3 class="font-display text-[30px] font-bold text-white mb-2 drop-shadow-lg">Women</h3>
+               <h3 class="font-display text-[30px] font-bold text-white mb-2 drop-shadow-lg">{{ $brand->brand_name }}</h3>
                <span class="inline-flex items-center gap-1.5 font-body text-[11px] tracking-[2px] uppercase text-white border-b border-gold pb-0.5">Shop Now <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
             </div>
          </a>
-
-         <a href="{{ url('/category/men') }}" class="relative overflow-hidden cursor-pointer group block" style="aspect-ratio:3/4">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80&auto=format&fit=crop"
-                 alt="Men" class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700">
-            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.05) 100%)"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-7 text-white">
-               <span class="block font-body text-[10px] tracking-[3px] uppercase text-gold mb-1">Collection 2025</span>
-               <h3 class="font-display text-[30px] font-bold text-white mb-2 drop-shadow-lg">Men</h3>
-               <span class="inline-flex items-center gap-1.5 font-body text-[11px] tracking-[2px] uppercase text-white border-b border-gold pb-0.5">Shop Now <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
-            </div>
-         </a>
-
-         <a href="{{ url('/products') }}" class="relative overflow-hidden cursor-pointer group block" style="aspect-ratio:3/4">
-            <img src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=700&q=80&auto=format&fit=crop"
-                 alt="Accessories" class="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-700">
-            <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.05) 100%)"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-7 text-white">
-               <span class="block font-body text-[10px] tracking-[3px] uppercase text-gold mb-1">Collection 2025</span>
-               <h3 class="font-display text-[30px] font-bold text-white mb-2 drop-shadow-lg">Accessories</h3>
-               <span class="inline-flex items-center gap-1.5 font-body text-[11px] tracking-[2px] uppercase text-white border-b border-gold pb-0.5">Shop Now <i class="fa-solid fa-arrow-right text-[9px]"></i></span>
-            </div>
-         </a>
-
+         @endforeach
       </div>
+      @else
+      <p class="text-center font-body text-gray-400 py-8">No brands available. Enable <strong>Show on Home</strong> for brands in the admin panel.</p>
+      @endif
    </div>
 </section>
 
@@ -209,7 +194,7 @@
          <div class="group relative"
               data-id="{{ $item->id }}"
               data-name="{{ addslashes($item->name) }}"
-              data-image="{{ asset('/storage/media/'.$item->image) }}"
+              data-image="{{ str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image) }}"
               data-price="{{ $price }}"
               data-mrp="{{ $mrp }}"
               data-desc="{{ addslashes(Str::substr($item->short_desc, 0, 200)) }}"
@@ -233,7 +218,8 @@
                </button>
 
                {{-- Image --}}
-               <img src="{{ asset('/storage/media/'.$item->image) }}" alt="{{ $item->name }}"
+               @php $pImg = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
+               <img src="{{ $pImg }}" alt="{{ $item->name }}"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy">
 
@@ -387,7 +373,8 @@
                   <i class="fa-regular fa-heart"></i>
                </button>
 
-               <img src="{{ asset('/storage/media/'.$item['image']) }}" alt="{{ $item['name'] }}"
+               @php $rImg = str_starts_with($item['image'] ?? '', 'http') ? $item['image'] : asset('/storage/media/'.$item['image']); @endphp
+               <img src="{{ $rImg }}" alt="{{ $item['name'] }}"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
 
                @if(!$isOut)

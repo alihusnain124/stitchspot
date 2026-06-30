@@ -10,7 +10,7 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $result['data']=Customer::all();
+        $result['data']=Customer::paginate(10);
 
        return view('admin/customer',$result);
     }

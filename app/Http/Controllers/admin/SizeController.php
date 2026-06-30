@@ -10,7 +10,7 @@ class SizeController extends Controller
 {
     public function index()
     {
-        $result['data']=Size::all();
+        $result['data']=Size::paginate(10);
 
        return view('admin/size',$result);
     }

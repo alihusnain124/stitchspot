@@ -36,6 +36,9 @@ class FrontController extends Controller
     }
     public function index(Request $req){
 
+        ///home brands
+        $result['home_brands']=DB::table('brands')->where(['status'=>1,'is_home'=>1])->take(8)->get();
+
         ///products
 
         $result['product']=DB::table('products')->where(['status'=>1])->inRandomOrder()->take(8)->get();
@@ -54,7 +57,7 @@ class FrontController extends Controller
         ///Tranding
 
 
-        $result['tranding_product']=DB::table('products')->where('status',1)->where('sold_count','>=',100)->get();
+        $result['tranding_product']=DB::table('products')->where('status',1)->where('sold_count','>=',100)->limit(10)->get();
         foreach($result['tranding_product'] as $item1){
             $result['tranding_product_attr'][$item1->id]=DB::table('products_attr')->leftJoin('sizes','sizes.id','=','products_attr.size_id')
             ->leftJoin('colors','colors.id','=','products_attr.color_id')->where(['products_attr.products_id'=>$item1->id])->get();
@@ -65,7 +68,7 @@ class FrontController extends Controller
         ///discounted
 
           
-        $result['discounted_product']=DB::table('products')->where(['status'=>1,'is_discounted'=>1])->get();
+        $result['discounted_product']=DB::table('products')->where(['status'=>1,'is_discounted'=>1])->limit(10)->get();
         foreach($result['discounted_product'] as $item1){
             $result['discounted_product_attr'][$item1->id]=DB::table('products_attr')->leftJoin('sizes','sizes.id','=','products_attr.size_id')
             ->leftJoin('colors','colors.id','=','products_attr.color_id')->where(['products_attr.products_id'=>$item1->id])->get();
@@ -74,7 +77,7 @@ class FrontController extends Controller
             ///latest product
 
          $tenDaysAgo = Carbon::now()->subDays(10);
-        $result['latest_product']=DB::table('products')->where(['status'=>1])->where('created_at', '>=', $tenDaysAgo)->get();
+        $result['latest_product']=DB::table('products')->where(['status'=>1])->where('created_at', '>=', $tenDaysAgo)->limit(10)->get();
         foreach($result['latest_product'] as $item1){
             $result['latest_product_attr'][$item1->id]=DB::table('products_attr')->leftJoin('sizes','sizes.id','=','products_attr.size_id')
             ->leftJoin('colors','colors.id','=','products_attr.color_id')->where(['products_attr.products_id'=>$item1->id])->get();
@@ -150,6 +153,8 @@ class FrontController extends Controller
                     }
                 }
         
+                $recommendedProductDetails = array_slice($recommendedProductDetails, 0, 10);
+
                 // return response()->json([
                 //     'status' => 'success',
                 //     'processedProductData' => $processedProductData,
@@ -436,20 +441,102 @@ class FrontController extends Controller
      
 }
 
+private function parseProductFilters(Request $req): array
+{
+    return [
+        'brands'     => array_values(array_filter(array_map('intval', (array) $req->query('brand', [])))),
+        'categories' => array_values(array_filter(array_map('intval', (array) $req->query('category', [])))),
+        'colors'     => array_values(array_filter(array_map('intval', (array) $req->query('color', [])))),
+        'sizes'      => array_values(array_filter(array_map('intval', (array) $req->query('size', [])))),
+        'sort'       => in_array($req->query('sort'), ['newest', 'oldest']) ? $req->query('sort') : 'newest',
+    ];
+}
+
+private function buildProductsQuery(array $f): \Illuminate\Database\Query\Builder
+{
+    $query = DB::table('products')->where('products.status', 1);
+
+    if (!empty($f['brands']))     $query->whereIn('brand', $f['brands']);
+    if (!empty($f['categories'])) $query->whereIn('category_id', $f['categories']);
+
+    if (!empty($f['colors'])) {
+        $colors = $f['colors'];
+        $query->whereExists(fn($q) => $q->select(DB::raw(1))->from('products_attr')
+            ->whereColumn('products_attr.products_id', 'products.id')->whereIn('color_id', $colors));
+    }
+    if (!empty($f['sizes'])) {
+        $sizes = $f['sizes'];
+        $query->whereExists(fn($q) => $q->select(DB::raw(1))->from('products_attr')
+            ->whereColumn('products_attr.products_id', 'products.id')->whereIn('size_id', $sizes));
+    }
+
+    $query->orderBy('products.id', $f['sort'] === 'oldest' ? 'asc' : 'desc');
+    return $query;
+}
+
 public function products(Request $req){
+    $filters = $this->parseProductFilters($req);
 
-       $result['product']=DB::table('products')->where(['status'=>1])->get();
-       foreach($result['product'] as $item1){
-           $result['product_attr'][$item1->id]=DB::table('products_attr')->leftJoin('sizes','sizes.id','=','products_attr.size_id')
-           ->leftJoin('colors','colors.id','=','products_attr.color_id')->where(['products_attr.products_id'=>$item1->id])->get();
-       }
+    $result['total']   = $this->buildProductsQuery($filters)->count();
+    $result['product'] = $this->buildProductsQuery($filters)->limit(10)->get();
+    $result['filters'] = $filters;
 
-       $uid = session()->get('FRONT_USER_LOGIN');
-       $result['wishlist_ids'] = $uid
-           ? DB::table('wishlists')->where('user_id', $uid)->pluck('product_id')->toArray()
-           : [];
+    $result['hero_brand'] = (count($filters['brands']) === 1)
+        ? DB::table('brands')->where('id', $filters['brands'][0])->first()
+        : null;
 
-    return view('front.products',$result);
+    $result['filter_brands']     = DB::table('brands')->where('status', 1)->get();
+    $result['filter_categories'] = DB::table('categories')->where('status', 1)->get();
+    $result['filter_colors']     = DB::table('colors')->where('status', 1)->get();
+    $result['filter_sizes']      = DB::table('sizes')->where('status', 1)->get();
+
+    foreach ($result['product'] as $item1) {
+        $result['product_attr'][$item1->id] = DB::table('products_attr')
+            ->leftJoin('sizes','sizes.id','=','products_attr.size_id')
+            ->leftJoin('colors','colors.id','=','products_attr.color_id')
+            ->where(['products_attr.products_id' => $item1->id])->get();
+    }
+
+    $uid = session()->get('FRONT_USER_LOGIN');
+    $result['wishlist_ids'] = $uid
+        ? DB::table('wishlists')->where('user_id', $uid)->pluck('product_id')->toArray()
+        : [];
+
+    return view('front.products', $result);
+}
+
+public function products_more(Request $req){
+    $filters  = $this->parseProductFilters($req);
+    $offset   = max(0, (int) $req->query('offset', 10));
+
+    $total    = $this->buildProductsQuery($filters)->count();
+    $products = $this->buildProductsQuery($filters)->skip($offset)->limit(10)->get();
+
+    $uid = session()->get('FRONT_USER_LOGIN');
+    $wishlist_ids = $uid
+        ? DB::table('wishlists')->where('user_id', $uid)->pluck('product_id')->toArray()
+        : [];
+
+    $html = '';
+    foreach ($products as $item) {
+        $attrs  = DB::table('products_attr')
+            ->leftJoin('sizes','sizes.id','=','products_attr.size_id')
+            ->leftJoin('colors','colors.id','=','products_attr.color_id')
+            ->where('products_attr.products_id', $item->id)->get();
+        $attr   = $attrs[0] ?? null;
+        $price  = $attr ? ($attr->price > 0 ? $attr->price : $attr->mrp) : 0;
+        $mrp    = $attr ? $attr->mrp : 0;
+        $qty    = $attr ? $attr->qty : 0;
+        $isSale = $attr && $attr->price > 0 && $attr->price < $attr->mrp;
+        $isOut  = $qty == 0;
+        $html  .= view('front._product_card', compact('item','price','mrp','qty','isSale','isOut'))->render();
+    }
+
+    return response()->json([
+        'html'        => $html,
+        'has_more'    => ($offset + count($products)) < $total,
+        'next_offset' => $offset + count($products),
+    ]);
 }
 
 
@@ -1071,21 +1158,83 @@ public function add_to_cart_product(Request $req){
  }
 
 
- public function categories(Request $req,$slug){
-    
-    $result['category']=DB::table('categories')->where(['status'=>1,'category_slug'=>$slug])->get();
-     foreach($result['category'] as $item){
+ public function categories(Request $req, $slug){
+    $cat = DB::table('categories')->where(['status'=>1,'category_slug'=>$slug])->first();
+    if (!$cat) abort(404);
 
-        $result['category_product']=DB::table('products')->where(['status'=>1,'category_id'=>$item->id])->get();
+    $brands = array_values(array_filter(array_map('intval',(array)$req->query('brand',[]))));
+    $colors = array_values(array_filter(array_map('intval',(array)$req->query('color',[]))));
+    $sizes  = array_values(array_filter(array_map('intval',(array)$req->query('size',[]))));
+    $sort   = in_array($req->query('sort'),['newest','oldest']) ? $req->query('sort') : 'newest';
 
-        foreach($result['category_product'] as $item1){
-            $result['category_product_attr'][$item1->id]=DB::table('products_attr')->leftJoin('sizes','sizes.id','=','products_attr.size_id')
-            ->leftJoin('colors','colors.id','=','products_attr.color_id')->where(['products_attr.products_id'=>$item1->id])->get();
-        }
-     }
-    
+    $query = DB::table('products')->where(['status'=>1,'category_id'=>$cat->id]);
+    if (!empty($brands)) $query->whereIn('brand',$brands);
+    if (!empty($colors)) { $c=$colors; $query->whereExists(fn($q)=>$q->select(DB::raw(1))->from('products_attr')->whereColumn('products_attr.products_id','products.id')->whereIn('color_id',$c)); }
+    if (!empty($sizes))  { $s=$sizes;  $query->whereExists(fn($q)=>$q->select(DB::raw(1))->from('products_attr')->whereColumn('products_attr.products_id','products.id')->whereIn('size_id',$s)); }
+    $query->orderBy('products.id', $sort==='oldest'?'asc':'desc');
+
+    $result['cat']     = $cat;
+    $result['total']   = $query->count();
+    $result['product'] = $query->limit(10)->get();
+    $result['filters'] = compact('brands','colors','sizes','sort');
+
+    $result['filter_brands'] = DB::table('brands')->where('status',1)->get();
+    $result['filter_colors'] = DB::table('colors')->where('status',1)->get();
+    $result['filter_sizes']  = DB::table('sizes')->where('status',1)->get();
+
+    $result['product_attr'] = [];
+    foreach ($result['product'] as $item) {
+        $result['product_attr'][$item->id] = DB::table('products_attr')
+            ->leftJoin('sizes','sizes.id','=','products_attr.size_id')
+            ->leftJoin('colors','colors.id','=','products_attr.color_id')
+            ->where('products_attr.products_id',$item->id)->get();
+    }
+
+    $uid = session()->get('FRONT_USER_LOGIN');
+    $result['wishlist_ids'] = $uid ? DB::table('wishlists')->where('user_id',$uid)->pluck('product_id')->toArray() : [];
 
     return view('front.category',$result);
+ }
+
+ public function categories_more(Request $req, $slug){
+    $cat = DB::table('categories')->where(['status'=>1,'category_slug'=>$slug])->first();
+    if (!$cat) return response()->json(['html'=>'','has_more'=>false,'next_offset'=>0]);
+
+    $brands = array_values(array_filter(array_map('intval',(array)$req->query('brand',[]))));
+    $colors = array_values(array_filter(array_map('intval',(array)$req->query('color',[]))));
+    $sizes  = array_values(array_filter(array_map('intval',(array)$req->query('size',[]))));
+    $sort   = in_array($req->query('sort'),['newest','oldest']) ? $req->query('sort') : 'newest';
+    $offset = max(0,(int)$req->query('offset',10));
+
+    $query = DB::table('products')->where(['status'=>1,'category_id'=>$cat->id]);
+    if (!empty($brands)) $query->whereIn('brand',$brands);
+    if (!empty($colors)) { $c=$colors; $query->whereExists(fn($q)=>$q->select(DB::raw(1))->from('products_attr')->whereColumn('products_attr.products_id','products.id')->whereIn('color_id',$c)); }
+    if (!empty($sizes))  { $s=$sizes;  $query->whereExists(fn($q)=>$q->select(DB::raw(1))->from('products_attr')->whereColumn('products_attr.products_id','products.id')->whereIn('size_id',$s)); }
+    $query->orderBy('products.id', $sort==='oldest'?'asc':'desc');
+
+    $total    = $query->count();
+    $products = $query->skip($offset)->limit(10)->get();
+
+    $html = '';
+    foreach ($products as $item) {
+        $attrs  = DB::table('products_attr')
+            ->leftJoin('sizes','sizes.id','=','products_attr.size_id')
+            ->leftJoin('colors','colors.id','=','products_attr.color_id')
+            ->where('products_attr.products_id',$item->id)->get();
+        $attr   = $attrs[0] ?? null;
+        $price  = $attr ? ($attr->price>0?$attr->price:$attr->mrp) : 0;
+        $mrp    = $attr ? $attr->mrp : 0;
+        $qty    = $attr ? $attr->qty : 0;
+        $isSale = $attr && $attr->price>0 && $attr->price<$attr->mrp;
+        $isOut  = $qty==0;
+        $html  .= view('front._product_card',compact('item','price','mrp','qty','isSale','isOut'))->render();
+    }
+
+    return response()->json([
+        'html'        => $html,
+        'has_more'    => ($offset+count($products))<$total,
+        'next_offset' => $offset+count($products),
+    ]);
  }
 
 
@@ -1333,7 +1482,7 @@ public function dashboard(Request $req){
 
         $result['total_completed_orders']=totalCompleteOrders($id);
         $result['total_earning']=totalEarning($id);
-        $result['price_recieved']=DB::table('confirm_orders')->where('service_user_id',$id)->where('paid_tailor','yes')->sum('price');
+        $result['price_recieved']=DB::table('confirm_orders')->where('service_user_id',$id)->where('paid_tailor','yes')->sum('price') * 0.75;
 
        
 
@@ -1575,6 +1724,45 @@ public function complete(Request $req){
 }
 
 
+public function apply_coupon(Request $req){
+    $code  = trim($req->post('code'));
+    $total = (float) $req->post('total');
+
+    if (!$code) {
+        return response()->json(['status' => 'error', 'msg' => 'Please enter a coupon code.']);
+    }
+
+    $coupon = DB::table('coupons')
+        ->where('status', 1)
+        ->where(function($q) use ($code) {
+            $q->whereRaw('LOWER(code) = ?', [strtolower($code)])
+              ->orWhereRaw('LOWER(title) = ?', [strtolower($code)]);
+        })
+        ->first();
+
+    if (!$coupon) {
+        return response()->json(['status' => 'error', 'msg' => 'Invalid or expired coupon code.']);
+    }
+
+    if ($coupon->min_order_amt && $total < $coupon->min_order_amt) {
+        return response()->json(['status' => 'error', 'msg' => 'Minimum order amount of Rs ' . number_format($coupon->min_order_amt) . ' required.']);
+    }
+
+    $discount = $coupon->type === 'percent'
+        ? round($total * $coupon->value / 100, 2)
+        : (float) $coupon->value;
+
+    $discount  = min($discount, $total);
+    $new_total = $total - $discount;
+
+    return response()->json([
+        'status'    => 'success',
+        'msg'       => 'Coupon applied! You saved Rs ' . number_format($discount),
+        'discount'  => $discount,
+        'new_total' => $new_total,
+    ]);
+}
+
 public function user_review(Request $req,$id){
 
     $result['order_detail']=DB::table('confirm_orders')->where('id',$id)->get();
@@ -1688,6 +1876,8 @@ public function get_products(Request $req)
                 ];
             }
         }
+
+        $recommendedProductDetails = array_slice($recommendedProductDetails, 0, 10);
 
         // return response()->json([
         //     'status' => 'success',
@@ -1834,11 +2024,12 @@ public function account_no(Request $req){
     $user_id=$req->input('user_id');
     $account_no=$req->input('account_no');
 
-    $insert=DB::table('account_no')->insert([
-        'user_id'=>$user_id,
-        'account_no'=>$account_no,
-        'added_on'=>date('Y-m-d h:i:s')
-    ]);
+  $insert = DB::table('account_no')->insert([
+    'user_id'        => $user_id,
+    'account_number' => $account_no,
+    'created_at'     => now(),
+    'updated_at'     => now(),
+]);
 
     if($insert){
         return redirect()->back()->with('cart_msg','Added Successfully');

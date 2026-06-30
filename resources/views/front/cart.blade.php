@@ -52,7 +52,8 @@
                      
                      {{-- Image --}}
                      <a href="{{ url('/product-details/'.$item->pid) }}" class="shrink-0 block overflow-hidden border border-gray-100">
-                        <img src="{{ asset('/storage/media/'.$item->product_image) }}" alt="{{ $item->product_name }}" class="w-20 h-24 object-cover hover:scale-105 transition-transform duration-500">
+                        @php $cImg = str_starts_with($item->product_image ?? '', 'http') ? $item->product_image : asset('/storage/media/'.$item->product_image); @endphp
+                        <img src="{{ $cImg }}" alt="{{ $item->product_name }}" class="w-20 h-24 object-cover hover:scale-105 transition-transform duration-500">
                      </a>
                      
                      {{-- Name --}}

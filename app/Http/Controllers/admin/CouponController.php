@@ -10,7 +10,7 @@ class CouponController extends Controller
 {
     public function index()
     {
-        $result['data']=Coupon::all();
+        $result['data']=Coupon::paginate(10);
 
        return view('admin/coupon',$result);
     }

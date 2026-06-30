@@ -1,6 +1,6 @@
 @extends('admin/layout')
 @section('title','Add Size')
-@section('page_title','{{ $id > 0 ? "Edit Size" : "Add Size" }}')
+@section('page_title'){{ $id > 0 ? 'Edit Size' : 'Add Size' }}@endsection
 @section('size_select','active')
 @section('content')
 

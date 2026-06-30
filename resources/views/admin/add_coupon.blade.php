@@ -1,6 +1,6 @@
 @extends('admin/layout')
 @section('title','Add Coupon')
-@section('page_title','{{ $id > 0 ? "Edit Coupon" : "Add Coupon" }}')
+@section('page_title'){{ $id > 0 ? 'Edit Coupon' : 'Add Coupon' }}@endsection
 @section('coupon_select','active')
 @section('content')
 

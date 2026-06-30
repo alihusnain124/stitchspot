@@ -1,0 +1,156 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class BrandSeeder extends Seeder
+{
+    /**
+     * Seed 100 clothing/fashion brands into the brands table.
+     */
+    public function run(): void
+    {
+        $brands = [
+            'Gucci', 'Prada', 'Louis Vuitton', 'Chanel', 'Versace',
+            'Armani', 'Burberry', 'Dior', 'Valentino', 'Givenchy',
+            'Balenciaga', 'Saint Laurent', 'Fendi', 'Hermes', 'Bottega Veneta',
+            'Tom Ford', 'Alexander McQueen', 'Celine', 'Loewe', 'Miu Miu',
+            'Nike', 'Adidas', 'Zara', 'H&M', 'Uniqlo',
+            'Ralph Lauren', 'Calvin Klein', 'Tommy Hilfiger', 'Hugo Boss', 'Lacoste',
+            'Levi\'s', 'Wrangler', 'Lee', 'Diesel', 'True Religion',
+            'Gap', 'Old Navy', 'Banana Republic', 'J.Crew', 'Abercrombie & Fitch',
+            'Hollister', 'American Eagle', 'Express', 'Forever 21', 'Primark',
+            'Mango', 'Next', 'Marks & Spencer', 'Topshop', 'ASOS',
+            'Boohoo', 'PrettyLittleThing', 'Shein', 'Fashion Nova', 'Missguided',
+            'Reformation', 'Everlane', 'Allbirds', 'Patagonia', 'The North Face',
+            'Columbia', 'Arc\'teryx', 'Timberland', 'Carhartt', 'Dickies',
+            'Under Armour', 'Puma', 'Reebok', 'New Balance', 'Converse',
+            'Vans', 'Fila', 'Champion', 'Polo Sport', 'Nautica',
+            'Brooks Brothers', 'J.Peterman', 'Ted Baker', 'Charles Tyrwhitt', 'Hackett',
+            'Eton', 'Canali', 'Ermenegildo Zegna', 'Brioni', 'Kiton',
+            'Khaadi', 'Gul Ahmed', 'Alkaram', 'Sana Safinaz', 'Sapphire',
+            'Bonanza Satrangi', 'Limelight', 'Nishat Linen', 'Ideas by Gul Ahmed', 'Ego',
+            'Maria B', 'Farah Talib Aziz', 'HSY', 'Elan', 'Asim Jofa',
+        ];
+
+        $brandImages = [
+            'Gucci'               => 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=700&q=80&auto=format&fit=crop',
+            'Prada'               => 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=700&q=80&auto=format&fit=crop',
+            'Louis Vuitton'       => 'https://images.unsplash.com/photo-1591085686350-798c0f9faa7f?w=700&q=80&auto=format&fit=crop',
+            'Chanel'              => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700&q=80&auto=format&fit=crop',
+            'Versace'             => 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=700&q=80&auto=format&fit=crop',
+            'Armani'              => 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=700&q=80&auto=format&fit=crop',
+            'Burberry'            => 'https://images.unsplash.com/photo-1548126032-079a0fb0099d?w=700&q=80&auto=format&fit=crop',
+            'Dior'                => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80&auto=format&fit=crop',
+            'Valentino'           => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=700&q=80&auto=format&fit=crop',
+            'Givenchy'            => 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=700&q=80&auto=format&fit=crop',
+            'Balenciaga'          => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=80&auto=format&fit=crop',
+            'Saint Laurent'       => 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=700&q=80&auto=format&fit=crop',
+            'Fendi'               => 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=80&auto=format&fit=crop',
+            'Hermes'              => 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=700&q=80&auto=format&fit=crop',
+            'Bottega Veneta'      => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=700&q=80&auto=format&fit=crop',
+            'Tom Ford'            => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80&auto=format&fit=crop',
+            'Alexander McQueen'   => 'https://images.unsplash.com/photo-1519657742521-4d683b746af9?w=700&q=80&auto=format&fit=crop',
+            'Celine'              => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=80&auto=format&fit=crop',
+            'Loewe'               => 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=700&q=80&auto=format&fit=crop',
+            'Miu Miu'             => 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=700&q=80&auto=format&fit=crop',
+            'Nike'                => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=80&auto=format&fit=crop',
+            'Adidas'              => 'https://images.unsplash.com/photo-1571731877695-6e95d2a5c3ef?w=700&q=80&auto=format&fit=crop',
+            'Zara'                => 'https://images.unsplash.com/photo-1561729959-fb745f4a91c4?w=700&q=80&auto=format&fit=crop',
+            'H&M'                 => 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=700&q=80&auto=format&fit=crop',
+            'Uniqlo'              => 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=700&q=80&auto=format&fit=crop',
+            'Ralph Lauren'        => 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=80&auto=format&fit=crop',
+            'Calvin Klein'        => 'https://images.unsplash.com/photo-1554568218-0f1715e72254?w=700&q=80&auto=format&fit=crop',
+            'Tommy Hilfiger'      => 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=80&auto=format&fit=crop',
+            'Hugo Boss'           => 'https://images.unsplash.com/photo-1473966968600-fa4ccd318cd1?w=700&q=80&auto=format&fit=crop',
+            'Lacoste'             => 'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=700&q=80&auto=format&fit=crop',
+            "Levi's"              => 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=700&q=80&auto=format&fit=crop',
+            'Wrangler'            => 'https://images.unsplash.com/photo-1624378440280-ede5f8c4cbad?w=700&q=80&auto=format&fit=crop',
+            'Lee'                 => 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=700&q=80&auto=format&fit=crop',
+            'Diesel'              => 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=700&q=80&auto=format&fit=crop',
+            'True Religion'       => 'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=700&q=80&auto=format&fit=crop',
+            'Gap'                 => 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=80&auto=format&fit=crop',
+            'Old Navy'            => 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=700&q=80&auto=format&fit=crop',
+            'Banana Republic'     => 'https://images.unsplash.com/photo-1434389677669-e08b4cec1105?w=700&q=80&auto=format&fit=crop',
+            'J.Crew'              => 'https://images.unsplash.com/photo-1608234808654-2a8875faa7fd?w=700&q=80&auto=format&fit=crop',
+            'Abercrombie & Fitch' => 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=700&q=80&auto=format&fit=crop',
+            'Hollister'           => 'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=700&q=80&auto=format&fit=crop',
+            'American Eagle'      => 'https://images.unsplash.com/photo-1523381294911-8d3cead13475?w=700&q=80&auto=format&fit=crop',
+            'Express'             => 'https://images.unsplash.com/photo-1485231183945-fffde7f4f8f0?w=700&q=80&auto=format&fit=crop',
+            'Forever 21'          => 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=700&q=80&auto=format&fit=crop',
+            'Primark'             => 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=700&q=80&auto=format&fit=crop',
+            'Mango'               => 'https://images.unsplash.com/photo-1515372392018-e5b63f5d0ab5?w=700&q=80&auto=format&fit=crop',
+            'Next'                => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700&q=80&auto=format&fit=crop',
+            'Marks & Spencer'     => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=700&q=80&auto=format&fit=crop',
+            'Topshop'             => 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=700&q=80&auto=format&fit=crop',
+            'ASOS'                => 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=700&q=80&auto=format&fit=crop',
+            'Boohoo'              => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80&auto=format&fit=crop',
+            'PrettyLittleThing'   => 'https://images.unsplash.com/photo-1566206091558-7f218b696731?w=700&q=80&auto=format&fit=crop',
+            'Shein'               => 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=700&q=80&auto=format&fit=crop',
+            'Fashion Nova'        => 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=700&q=80&auto=format&fit=crop',
+            'Missguided'          => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=700&q=80&auto=format&fit=crop',
+            'Reformation'         => 'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=700&q=80&auto=format&fit=crop',
+            'Everlane'            => 'https://images.unsplash.com/photo-1434389677669-e08b4cec1105?w=700&q=80&auto=format&fit=crop',
+            'Allbirds'            => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=80&auto=format&fit=crop',
+            'Patagonia'           => 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=700&q=80&auto=format&fit=crop',
+            'The North Face'      => 'https://images.unsplash.com/photo-1548126032-079a0fb0099d?w=700&q=80&auto=format&fit=crop',
+            'Columbia'            => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=700&q=80&auto=format&fit=crop',
+            "Arc'teryx"           => 'https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=700&q=80&auto=format&fit=crop',
+            'Timberland'          => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=80&auto=format&fit=crop',
+            'Carhartt'            => 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=700&q=80&auto=format&fit=crop',
+            'Dickies'             => 'https://images.unsplash.com/photo-1624378440280-ede5f8c4cbad?w=700&q=80&auto=format&fit=crop',
+            'Under Armour'        => 'https://images.unsplash.com/photo-1571731877695-6e95d2a5c3ef?w=700&q=80&auto=format&fit=crop',
+            'Puma'                => 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=700&q=80&auto=format&fit=crop',
+            'Reebok'              => 'https://images.unsplash.com/photo-1556906781-9a412961d28c?w=700&q=80&auto=format&fit=crop',
+            'New Balance'         => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&q=80&auto=format&fit=crop',
+            'Converse'            => 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=700&q=80&auto=format&fit=crop',
+            'Vans'                => 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=700&q=80&auto=format&fit=crop',
+            'Fila'                => 'https://images.unsplash.com/photo-1571731877695-6e95d2a5c3ef?w=700&q=80&auto=format&fit=crop',
+            'Champion'            => 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=80&auto=format&fit=crop',
+            'Polo Sport'          => 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700&q=80&auto=format&fit=crop',
+            'Nautica'             => 'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=700&q=80&auto=format&fit=crop',
+            'Brooks Brothers'     => 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=700&q=80&auto=format&fit=crop',
+            'J.Peterman'          => 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=80&auto=format&fit=crop',
+            'Ted Baker'           => 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=700&q=80&auto=format&fit=crop',
+            'Charles Tyrwhitt'    => 'https://images.unsplash.com/photo-1473966968600-fa4ccd318cd1?w=700&q=80&auto=format&fit=crop',
+            'Hackett'             => 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=700&q=80&auto=format&fit=crop',
+            'Eton'                => 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=700&q=80&auto=format&fit=crop',
+            'Canali'              => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&q=80&auto=format&fit=crop',
+            'Ermenegildo Zegna'   => 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=700&q=80&auto=format&fit=crop',
+            'Brioni'              => 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=80&auto=format&fit=crop',
+            'Kiton'               => 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=700&q=80&auto=format&fit=crop',
+            'Khaadi'              => 'https://images.unsplash.com/photo-1583391099995-7f21a3506a33?w=700&q=80&auto=format&fit=crop',
+            'Gul Ahmed'           => 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=700&q=80&auto=format&fit=crop',
+            'Alkaram'             => 'https://images.unsplash.com/photo-1614786269829-d24616faf56d?w=700&q=80&auto=format&fit=crop',
+            'Sana Safinaz'        => 'https://images.unsplash.com/photo-1519657742521-4d683b746af9?w=700&q=80&auto=format&fit=crop',
+            'Sapphire'            => 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80&auto=format&fit=crop',
+            'Bonanza Satrangi'    => 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=700&q=80&auto=format&fit=crop',
+            'Limelight'           => 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=700&q=80&auto=format&fit=crop',
+            'Nishat Linen'        => 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=700&q=80&auto=format&fit=crop',
+            'Ideas by Gul Ahmed'  => 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=700&q=80&auto=format&fit=crop',
+            'Ego'                 => 'https://images.unsplash.com/photo-1515372392018-e5b63f5d0ab5?w=700&q=80&auto=format&fit=crop',
+            'Maria B'             => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=700&q=80&auto=format&fit=crop',
+            'Farah Talib Aziz'    => 'https://images.unsplash.com/photo-1566206091558-7f218b696731?w=700&q=80&auto=format&fit=crop',
+            'HSY'                 => 'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=700&q=80&auto=format&fit=crop',
+            'Elan'                => 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=700&q=80&auto=format&fit=crop',
+            'Asim Jofa'           => 'https://images.unsplash.com/photo-1519657742521-4d683b746af9?w=700&q=80&auto=format&fit=crop',
+        ];
+
+        $rows = array_map(function ($brand) use ($brandImages) {
+            return [
+                'brand_name'  => $brand,
+                'brand_image' => $brandImages[$brand] ?? 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=700&q=80&auto=format&fit=crop',
+                'is_home'     => rand(0, 1),
+                'status'      => 1,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ];
+        }, $brands);
+
+        DB::table('brands')->insertOrIgnore($rows);
+
+        $this->command->info('✅ 100 brands seeded.');
+    }
+}

@@ -307,12 +307,68 @@
       color: #888;
       margin-bottom: 16px;
     }
+
+    /* ─── HAMBURGER BUTTON ───────────────────── */
+    .ss-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 6px;
+      color: #1A1A1A;
+      font-size: 18px;
+      line-height: 1;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    /* ─── SIDEBAR OVERLAY ────────────────────── */
+    .ss-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 999;
+    }
+    body.sidebar-open .ss-overlay { display: block; }
+
+    /* ─── MOBILE RESPONSIVE ──────────────────── */
+    @media (max-width: 767px) {
+      .ss-sidebar {
+        transform: translateX(-240px);
+        transition: transform .26s ease;
+        z-index: 1100;
+      }
+      body.sidebar-open .ss-sidebar { transform: translateX(0); }
+
+      .ss-topbar {
+        left: 0;
+        padding: 0 16px;
+      }
+      .ss-topbar-email { display: none; }
+      .ss-hamburger { display: flex; align-items: center; }
+
+      .ss-main { margin-left: 0; }
+      .ss-content { padding: 16px; }
+
+      .admin-card-header { flex-wrap: wrap; gap: 10px; }
+      .stat-card { padding: 18px; }
+      .stat-card-value { font-size: 22px; }
+    }
+
+    @media (max-width: 480px) {
+      .ss-topbar-logout span { display: none; }
+      .ss-content { padding: 12px; }
+    }
   </style>
 </head>
 <body>
 
+<!-- SIDEBAR OVERLAY -->
+<div class="ss-overlay" id="ss-overlay" onclick="closeSidebar()"></div>
+
 <!-- SIDEBAR -->
-<aside class="ss-sidebar">
+<aside class="ss-sidebar" id="ss-sidebar">
   <div class="ss-sidebar-brand">
     <div class="brand-name">Stitch<span>Spot</span></div>
     <div class="brand-sub">Admin Panel</div>
@@ -370,12 +426,12 @@
           <i class="fa-solid fa-shirt"></i> Product
         </a>
       </li>
-      <li class="@yield('coupon_select')" style="display:none">
+      <li class="@yield('coupon_select')">
         <a href="{{url('admin/coupon')}}">
           <i class="fa-solid fa-ticket"></i> Coupon
         </a>
       </li>
-      <li class="@yield('tax_select')" style="display:none">
+      <li class="@yield('tax_select')">
         <a href="{{url('admin/tax')}}">
           <i class="fa-solid fa-percent"></i> Tax
         </a>
@@ -392,11 +448,17 @@
 
 <!-- TOPBAR -->
 <header class="ss-topbar">
-  <span class="ss-topbar-title">@yield('page_title','Dashboard')</span>
+  <div style="display:flex;align-items:center;">
+    <button class="ss-hamburger" onclick="toggleSidebar()" aria-label="Toggle menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <span class="ss-topbar-title">@yield('page_title','Dashboard')</span>
+  </div>
   <div class="ss-topbar-right">
     <span class="ss-topbar-email">{{session()->get('admin_email')}}</span>
     <a class="ss-topbar-logout" href="{{url('/admin/logout')}}">
-      <i class="fa-solid fa-right-from-bracket" style="font-size:11px"></i> Logout
+      <i class="fa-solid fa-right-from-bracket" style="font-size:11px"></i>
+      <span>Logout</span>
     </a>
   </div>
 </header>
@@ -422,6 +484,17 @@
     function toast(type,title,text,timer){timer=timer||3500;var c=_cfg[type]||_cfg.warning;var el=document.createElement('div');el.style.cssText='pointer-events:all;display:flex;align-items:flex-start;gap:10px;background:#fff;border-left:3px solid '+c.b+';box-shadow:0 4px 20px rgba(0,0,0,.12);padding:14px 14px;min-width:260px;max-width:340px;font-family:\'DM Sans\',sans-serif;opacity:0;transform:translateX(20px);transition:opacity .3s,transform .3s;position:relative;overflow:hidden;';el.innerHTML='<div style="width:22px;height:22px;border-radius:50%;background:'+c.bg+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">'+c.s+'</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#1A1A1A">'+title+'</div>'+(text?'<div style="font-size:12px;color:#888;margin-top:2px">'+text+'</div>':'')+'</div><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:0;flex-shrink:0">&times;</button><div style="position:absolute;bottom:0;left:0;height:2px;background:'+c.b+';width:100%;transition-property:width;transition-duration:'+timer+'ms;transition-timing-function:linear" class="ss-bar"></div>';_cont().appendChild(el);requestAnimationFrame(function(){requestAnimationFrame(function(){el.style.opacity='1';el.style.transform='translateX(0)';el.querySelector('.ss-bar').style.width='0%';});});setTimeout(function(){el.style.opacity='0';el.style.transform='translateX(20px)';setTimeout(function(){el&&el.remove();},300);},timer);}
     return{toast:toast};
   })();
+
+  /* ── Sidebar toggle ─────────────────────── */
+  function toggleSidebar(){ document.body.classList.toggle('sidebar-open'); }
+  function closeSidebar(){ document.body.classList.remove('sidebar-open'); }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.ss-nav a').forEach(function(link){
+      link.addEventListener('click', function(){ closeSidebar(); });
+    });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeSidebar(); });
+  });
 
   /* ── Legacy helpers ──────────────────────── */
   var count=0;

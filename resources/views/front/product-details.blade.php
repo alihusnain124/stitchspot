@@ -57,8 +57,13 @@
          {{-- ── LEFT: Images ── --}}
          <div class="lg:w-[480px] shrink-0">
             <div class="overflow-hidden bg-gray-50 border border-gray-100 mb-3" style="aspect-ratio:3/4">
+               @php
+               $mainImgSrc = $activeAttr->attr_image
+                   ? asset('storage/media/'.$activeAttr->attr_image)
+                   : (str_starts_with($p->image ?? '', 'http') ? $p->image : asset('storage/media/'.$p->image));
+               @endphp
                <img id="main-img"
-                    src="{{ asset('storage/media/' . ($activeAttr->attr_image ?? $p->image)) }}"
+                    src="{{ $mainImgSrc }}"
                     alt="{{ $activeProduct->name }}"
                     class="w-full h-full object-cover">
             </div>
@@ -304,7 +309,8 @@
          <a href="{{ url('/product-details/'.$item->id) }}"
             class="group bg-white border border-gray-100 hover:shadow-lg transition-all duration-300 block">
             <div class="overflow-hidden bg-gray-50 relative" style="aspect-ratio:3/4">
-               <img src="{{ asset('/storage/media/'.$item->image) }}"
+               @php $relImg = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
+               <img src="{{ $relImg }}"
                     alt="{{ $item->name }}"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                @if($rAttr)

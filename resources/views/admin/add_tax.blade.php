@@ -1,6 +1,6 @@
 @extends('admin/layout')
 @section('title','Add Tax')
-@section('page_title','{{ $id > 0 ? "Edit Tax" : "Add Tax" }}')
+@section('page_title'){{ $id > 0 ? 'Edit Tax' : 'Add Tax' }}@endsection
 @section('tax_select','active')
 @section('content')
 

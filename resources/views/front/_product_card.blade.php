@@ -9,7 +9,7 @@
    @if($hasQV)
    data-id="{{ $item->id }}"
    data-name="{{ addslashes($item->name) }}"
-   data-image="{{ asset('/storage/media/'.$item->image) }}"
+   data-image="{{ str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image) }}"
    data-price="{{ $price }}"
    data-mrp="{{ $mrp }}"
    data-desc="{{ addslashes(Str::substr($item->short_desc ?? '', 0, 200)) }}"
@@ -36,7 +36,8 @@
       </button>
 
       {{-- Image --}}
-      <img src="{{ asset('/storage/media/'.$item->image) }}" alt="{{ $item->name }}"
+      @php $imgSrc = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
+      <img src="{{ $imgSrc }}" alt="{{ $item->name }}"
            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
            loading="lazy">
 

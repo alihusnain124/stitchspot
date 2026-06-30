@@ -85,7 +85,8 @@
                </button>
 
                {{-- Image --}}
-               <img src="{{ asset('/storage/media/'.$item->image) }}" alt="{{ $item->name }}"
+               @php $wImg = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
+               <img src="{{ $wImg }}" alt="{{ $item->name }}"
                     class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                     onerror="this.onerror=null;this.src='{{ asset('front-assets/images/slider-bg.jpg') }}'">

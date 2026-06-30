@@ -1,6 +1,6 @@
 @extends('admin/layout')
 @section('title','Add Category')
-@section('page_title','{{ $id > 0 ? "Edit Category" : "Add Category" }}')
+@section('page_title'){{ $id > 0 ? 'Edit Category' : 'Add Category' }}@endsection
 @section('category_select','active')
 @section('content')
 

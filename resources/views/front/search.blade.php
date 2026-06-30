@@ -78,7 +78,8 @@
                </button>
 
                {{-- Image --}}
-               <img src="{{ asset('/storage/media/'.$item->image) }}" alt="{{ $item->name }}"
+               @php $sImg = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
+               <img src="{{ $sImg }}" alt="{{ $item->name }}"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy">
 

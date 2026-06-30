@@ -10,7 +10,7 @@ class TaxController extends Controller
 {
     public function index()
     {
-        $result['data']=Tax::all();
+        $result['data']=Tax::paginate(10);
 
        return view('admin/tax',$result);
     }
@@ -34,7 +34,7 @@ class TaxController extends Controller
        
        $req->validate([
        
-        'tax_value'=>'required|unique:taxs,tax_value,'.$req->post('id'),
+        'tax_value'=>'required|unique:taxes,tax_value,'.$req->post('id'),
      
        ]);
        if($req->post('id')>0){

@@ -44,6 +44,7 @@
       </tbody>
     </table>
   </div>
+  {{ $orders->links('admin.pagination') }}
 </div>
 
 @endsection

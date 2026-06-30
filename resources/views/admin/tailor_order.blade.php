@@ -4,11 +4,11 @@
 @section('tailor_order_select','active')
 @section('content')
 
-@if(isset($active_orders[0]))
+@if($active_orders->isNotEmpty())
 <div class="admin-card">
   <div class="admin-card-header">
     <span class="admin-card-title">Active Orders</span>
-    <span class="badge-info">{{ count($active_orders) }} active</span>
+    <span class="badge-info">{{ $active_orders->total() }} active</span>
   </div>
   <div class="table-responsive">
     <table class="admin-table">
@@ -36,14 +36,15 @@
       </tbody>
     </table>
   </div>
+  {{ $active_orders->links('admin.pagination') }}
 </div>
 @endif
 
-@if(isset($completed_orders[0]))
+@if($completed_orders->isNotEmpty())
 <div class="admin-card">
   <div class="admin-card-header">
     <span class="admin-card-title">Completed Orders</span>
-    <span class="badge-on">{{ count($completed_orders) }} completed</span>
+    <span class="badge-on">{{ $completed_orders->total() }} completed</span>
   </div>
   <div class="table-responsive">
     <table class="admin-table">
@@ -81,6 +82,7 @@
       </tbody>
     </table>
   </div>
+  {{ $completed_orders->links('admin.pagination') }}
 </div>
 @endif
 

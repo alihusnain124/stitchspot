@@ -54,6 +54,7 @@
       </tbody>
     </table>
   </div>
+  {{ $data->links('admin.pagination') }}
 </div>
 
 @endsection

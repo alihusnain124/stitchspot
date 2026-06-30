@@ -1,6 +1,6 @@
 @extends('admin/layout')
 @section('title','Add Product')
-@section('page_title','{{ $id > 0 ? "Edit Product" : "Add Product" }}')
+@section('page_title'){{ $id > 0 ? 'Edit Product' : 'Add Product' }}@endsection
 @section('product_select','active')
 @section('content')
 
@@ -48,7 +48,7 @@ else $image_req = 'required';
           <label class="adm-label">Product Image</label>
           <input id="image" name="image" type="file" class="adm-input" {{$image_req}}>
           @if ($image != '')
-            <img class="mt-2" width="80px" src="{{asset('/storage/media/'.$image)}}" alt="">
+            <img class="mt-2" width="80px" src="{{ str_starts_with($image, 'http') ? $image : asset('/storage/media/'.$image) }}" alt="">
           @endif
           @error('image')
             <div class="adm-err">Required, should be jpg, png or jpeg</div>
@@ -167,7 +167,7 @@ else $image_req = 'required';
                 <label class="adm-label">Variant Image</label>
                 <input name="attr_image[]" type="file" class="adm-input" {{$image_req}}>
                 @if ($pAArr['attr_image'] != '')
-                  <img class="mt-2" width="70px" src="{{asset('/storage/media/'.$pAArr['attr_image'])}}" alt="">
+                  <img class="mt-2" width="70px" src="{{ str_starts_with($pAArr['attr_image'], 'http') ? $pAArr['attr_image'] : asset('/storage/media/'.$pAArr['attr_image']) }}" alt="">
                 @endif
                 @error('attr_image.*')
                   <div class="adm-err">Required, should be jpg, png or jpeg</div>

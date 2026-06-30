@@ -128,7 +128,7 @@
          <div class="mt-4 bg-white border border-gray-100 p-5">
             <h3 class="font-body text-[10.5px] tracking-[3px] uppercase text-gray-400 mb-2">Stripe Account</h3>
             @if(isset($account_no[0]))
-               <p class="font-body text-[13px] text-gray-500 break-all tracking-wide">{{ $account_no[0]->account_no }}</p>
+               <p class="font-body text-[13px] text-gray-500 break-all tracking-wide">{{ $account_no[0]->account_number }}</p>
             @else
                <div class="flex gap-2 mt-1">
                   <input type="text" id="account_no" placeholder="Enter account no"

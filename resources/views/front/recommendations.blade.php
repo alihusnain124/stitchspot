@@ -29,7 +29,8 @@
              
               
                 <div class="pro" >
-                   <img src="{{asset('/storage/media/'.$item['image'])}}">
+                   @php $recImg = str_starts_with($item['image'] ?? '', 'http') ? $item['image'] : asset('/storage/media/'.$item['image']); @endphp
+                   <img src="{{ $recImg }}">
                    <div class="des">
                       <h5><a  style='color:black'href="{{url('/product-details/'.$item['id'])}}">{{$item['name']}}</a></h5>
                       @if($item['qty']==0)

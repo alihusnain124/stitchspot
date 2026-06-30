@@ -13,7 +13,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $result['data']=Category::all();
+        $result['data']=Category::paginate(10);
 
        return view('admin/category',$result);
     }

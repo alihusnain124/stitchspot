@@ -269,7 +269,7 @@
    {{-- ═══════════════════════════════
         STICKY NAVBAR
    ═══════════════════════════════ --}}
-   <header class="sticky top-0 z-[1000] bg-white border-b border-gray-200">
+   <header class="sticky top-0 z-[1200] bg-white border-b border-gray-200">
       {{-- Flex navbar: Logo | Nav Center | Actions --}}
       <div class="max-w-[1280px] mx-auto px-4 lg:px-8 flex items-center h-16">
 

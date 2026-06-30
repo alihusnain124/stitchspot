@@ -11,7 +11,7 @@ class OrderController extends Controller
 {
     public function index(){
 
-        $result['orders']=DB::table('orders')->get();
+        $result['orders']=DB::table('orders')->paginate(10);
         return view('admin.order',$result);
      
     }
@@ -51,9 +51,9 @@ class OrderController extends Controller
 
     public function tailor_order(Request $req){
 
-        $result['active_orders']=DB::table('confirm_orders')->where(['is_paid'=>'yes','status'=>'processing'])->get();
+        $result['active_orders']=DB::table('confirm_orders')->where(['is_paid'=>'yes','status'=>'processing'])->paginate(10, ['*'], 'page_active');
 
-        $result['completed_orders']=DB::table('confirm_orders')->where(['is_paid'=>'yes','status'=>'completed'])->get();
+        $result['completed_orders']=DB::table('confirm_orders')->where(['is_paid'=>'yes','status'=>'completed'])->paginate(10, ['*'], 'page_completed');
 
 
         return view('admin.tailor_order',$result);

@@ -41,6 +41,7 @@ use  App\Http\Controllers\front\StripePaymentController;
   Route::post('/login_process',[FrontController::class,'login_process']);
   Route::get('/profile/{id}',[FrontController::class,'profile']);
   Route::get('/products',[FrontController::class,'products']);
+  Route::get('/products/more',[FrontController::class,'products_more']);
   Route::get('/product-details/{id}',[FrontController::class,'product_details']);
   Route::get('/search',[FrontController::class,'search']);
   Route::get('/cart',[FrontController::class,'cart']);
@@ -49,6 +50,7 @@ use  App\Http\Controllers\front\StripePaymentController;
   Route::post('/delete_cart',[FrontController::class,'delete_cart']);
   Route::get('/checkout',[FrontController::class,'checkout']);
   Route::post('/add_to_cart_product',[FrontController::class,'add_to_cart_product']);
+  Route::get('/category/{slug}/more',[FrontController::class,'categories_more']);
   Route::get('/category/{slug}',[FrontController::class,'categories']);
   Route::get('/contact',[FrontController::class,'contact']);
   Route::get('/order_process',[FrontController::class,'order_process']);
@@ -72,6 +74,7 @@ use  App\Http\Controllers\front\StripePaymentController;
 
     ///orders
 
+Route::post('/apply_coupon',[FrontController::class,'apply_coupon']);
 Route::post('/user_order',[FrontController::class,'user_order']);
 Route::post('/action',[FrontController::class,'action']);
 Route::get('/order_details/{id}',[FrontController::class,'order_details']);

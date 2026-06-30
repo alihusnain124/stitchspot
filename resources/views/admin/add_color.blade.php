@@ -1,6 +1,6 @@
 @extends('admin/layout')
 @section('title','Add Color')
-@section('page_title','{{ $id > 0 ? "Edit Color" : "Add Color" }}')
+@section('page_title'){{ $id > 0 ? 'Edit Color' : 'Add Color' }}@endsection
 @section('color_select','active')
 @section('content')
 

@@ -138,10 +138,28 @@
                      </div>
                   </div>
 
+                  {{-- Coupon --}}
+                  <div class="mb-6">
+                     <div class="flex gap-2">
+                        <input type="text" id="coupon_code" placeholder="Coupon code"
+                           class="flex-1 h-10 border border-gray-200 px-3 font-body text-[13px] text-[#1A1A1A] outline-none focus:border-gold transition-colors bg-white">
+                        <button type="button" onclick="applyCoupon()"
+                           class="h-10 px-4 bg-[#1A1A1A] text-white font-body text-[11px] font-semibold tracking-[1.5px] uppercase hover:bg-gold transition-colors border-none cursor-pointer whitespace-nowrap">
+                           Apply
+                        </button>
+                     </div>
+                     <div id="coupon_msg" class="font-body text-[12px] mt-2 min-h-[16px]"></div>
+                  </div>
+
+                  <div id="discount_row" style="display:none;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                     <span class="font-body text-[14.5px] text-green-600">Discount</span>
+                     <span id="discount_val" class="font-body text-[14.5px] font-medium text-green-600"></span>
+                  </div>
+
                   <div class="flex justify-between items-center border-t border-gray-200 pt-6 mb-8">
                      <span class="font-body text-[16px] font-bold text-[#1A1A1A]">Total</span>
-                     <span class="font-display text-[24px] font-semibold text-[#1A1A1A]">Rs {{ number_format($product_price) }}</span>
-                     <input type="hidden" value="{{ $product_price }}" name="total_price">
+                     <span class="font-display text-[24px] font-semibold text-[#1A1A1A]" id="final_total">Rs {{ number_format($product_price) }}</span>
+                     <input type="hidden" value="{{ $product_price }}" name="total_price" id="total_price_input">
                   </div>
 
                   <button type="submit" class="flex items-center justify-center w-full h-12 bg-[#1A1A1A] text-white font-body text-[12px] font-semibold tracking-[2px] uppercase hover:bg-gold transition-colors border-none cursor-pointer">
@@ -155,4 +173,42 @@
    </div>
 </section>
 
+@endsection
+
+@section('scripts')
+<script>
+function applyCoupon() {
+   var code  = document.getElementById('coupon_code').value.trim();
+   var total = parseFloat('{{ $product_price }}');
+   var msg   = document.getElementById('coupon_msg');
+
+   if (!code) { msg.style.color = '#E63946'; msg.textContent = 'Please enter a coupon code.'; return; }
+
+   msg.style.color = '#888'; msg.textContent = 'Checking…';
+
+   $.ajax({
+      url: '/apply_coupon',
+      type: 'POST',
+      data: { code: code, total: total, _token: $('meta[name="csrf-token"]').attr('content') },
+      success: function(res) {
+         if (res.status === 'success') {
+            msg.style.color = '#16A34A'; msg.textContent = res.msg;
+            document.getElementById('discount_val').textContent = '− Rs ' + res.discount.toLocaleString('en-PK');
+            document.getElementById('discount_row').style.display = 'flex';
+            document.getElementById('final_total').textContent = 'Rs ' + Math.round(res.new_total).toLocaleString('en-PK');
+            document.getElementById('total_price_input').value = res.new_total;
+            document.getElementById('coupon_code').disabled = true;
+         } else {
+            msg.style.color = '#E63946'; msg.textContent = res.msg;
+            document.getElementById('discount_row').style.display = 'none';
+         }
+      },
+      error: function() { msg.style.color = '#E63946'; msg.textContent = 'Something went wrong. Try again.'; }
+   });
+}
+
+document.getElementById('coupon_code').addEventListener('keydown', function(e) {
+   if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); }
+});
+</script>
 @endsection
