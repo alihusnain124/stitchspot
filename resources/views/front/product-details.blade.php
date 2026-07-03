@@ -308,37 +308,15 @@
 
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
          @foreach($related_product as $item)
-         @php $rAttr = $related_product_attr[$item->id][0] ?? null; @endphp
-         <a href="{{ url('/product-details/'.$item->id) }}"
-            class="group bg-white border border-gray-100 hover:shadow-lg transition-all duration-300 block">
-            <div class="overflow-hidden bg-gray-50 relative" style="aspect-ratio:3/4">
-               @php $relImg = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
-               <img src="{{ $relImg }}"
-                    alt="{{ $item->name }}"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-               @if($rAttr)
-                  @if($rAttr->qty == 0)
-                  <span class="absolute top-3 left-3 bg-[#1A1A1A] text-white font-body text-[9px] tracking-[0.15em] uppercase px-2.5 py-1">Sold Out</span>
-                  @elseif($item->is_discounted == 1)
-                  <span class="absolute top-3 left-3 bg-gold text-[#1A1A1A] font-body text-[9px] tracking-[0.15em] uppercase px-2.5 py-1">Sale</span>
-                  @else
-                  <span class="absolute top-3 left-3 bg-[#1A1A1A] text-white font-body text-[9px] tracking-[0.15em] uppercase px-2.5 py-1">New</span>
-                  @endif
-               @endif
-            </div>
-            <div class="p-4">
-               <h3 class="font-body text-[13.5px] font-medium text-[#1A1A1A] mb-1 line-clamp-1 group-hover:text-gold transition-colors">{{ $item->name }}</h3>
-               <p class="font-body text-[12px] text-gray-400 mb-2 line-clamp-1">{{ $item->short_desc }}</p>
-               @if($rAttr)
-                  @if($rAttr->price == 0)
-                  <span class="font-body text-[14px] font-semibold text-[#1A1A1A]">Rs {{ number_format($rAttr->mrp) }}/-</span>
-                  @else
-                  <span class="font-body text-[12px] text-gray-400 line-through mr-1">Rs {{ number_format($rAttr->mrp) }}</span>
-                  <span class="font-body text-[14px] font-semibold text-[#1A1A1A]">Rs {{ number_format($rAttr->price) }}/-</span>
-                  @endif
-               @endif
-            </div>
-         </a>
+         @php
+            $attr   = $related_product_attr[$item->id][0] ?? null;
+            $price  = $attr ? ($attr->price > 0 ? $attr->price : $attr->mrp) : 0;
+            $mrp    = $attr ? $attr->mrp : 0;
+            $qty    = $attr ? $attr->qty : 0;
+            $isSale = $attr && $attr->price > 0 && $attr->price < $attr->mrp;
+            $isOut  = $qty == 0;
+         @endphp
+         @include('front._product_card', compact('item','price','mrp','qty','isSale','isOut'))
          @endforeach
       </div>
    </div>
