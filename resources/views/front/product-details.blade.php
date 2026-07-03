@@ -35,7 +35,7 @@
 
    $activeProduct = isset($again_product[0]) ? $again_product[0] : $p;
 
-   $hasSale = isset($activeAttr) && $activeAttr->price > 0;
+   $hasSale = isset($activeAttr) && $activeAttr->price > 0 && $activeAttr->price < $activeAttr->mrp;
 @endphp
 
 {{-- ── Breadcrumb ── --}}
