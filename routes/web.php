@@ -44,6 +44,7 @@ use  App\Http\Controllers\front\StripePaymentController;
   Route::get('/products/more',[FrontController::class,'products_more']);
   Route::get('/product-details/{id}',[FrontController::class,'product_details']);
   Route::get('/search',[FrontController::class,'search']);
+  Route::get('/search/more',[FrontController::class,'search_more']);
   Route::get('/cart',[FrontController::class,'cart']);
   Route::post('/add_to_cart',[FrontController::class,'add_to_cart']);
   Route::post('/update_cart',[FrontController::class,'update_cart']);

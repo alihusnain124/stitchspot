@@ -58,9 +58,11 @@
          <div class="lg:w-[480px] shrink-0">
             <div class="overflow-hidden bg-gray-50 border border-gray-100 mb-3" style="aspect-ratio:3/4">
                @php
-               $mainImgSrc = $activeAttr->attr_image
-                   ? asset('storage/media/'.$activeAttr->attr_image)
-                   : (str_starts_with($p->image ?? '', 'http') ? $p->image : asset('storage/media/'.$p->image));
+               $fallbackImgSrc = str_starts_with($p->image ?? '', 'http') ? $p->image : asset('storage/media/'.$p->image);
+               $resolveAttrImg = fn($img) => $img
+                   ? (str_starts_with($img, 'http') ? $img : asset('storage/media/'.$img))
+                   : $fallbackImgSrc;
+               $mainImgSrc = $resolveAttrImg($activeAttr->attr_image);
                @endphp
                <img id="main-img"
                     src="{{ $mainImgSrc }}"
@@ -71,10 +73,11 @@
             {{-- Thumbnails --}}
             <div class="grid grid-cols-4 gap-2">
                @foreach($product_attr[$pid] as $item)
+               @php $thumbSrc = $resolveAttrImg($item->attr_image); @endphp
                <div class="overflow-hidden border border-gray-100 cursor-pointer hover:border-gold transition-colors"
                     style="aspect-ratio:1/1"
-                    onclick="document.getElementById('main-img').src='{{ asset('storage/media/'.$item->attr_image) }}'">
-                  <img src="{{ asset('storage/media/'.$item->attr_image) }}"
+                    onclick="document.getElementById('main-img').src='{{ $thumbSrc }}'">
+                  <img src="{{ $thumbSrc }}"
                        alt="{{ $activeProduct->name }}"
                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
                </div>

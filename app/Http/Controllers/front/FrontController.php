@@ -449,6 +449,7 @@ private function parseProductFilters(Request $req): array
         'colors'     => array_values(array_filter(array_map('intval', (array) $req->query('color', [])))),
         'sizes'      => array_values(array_filter(array_map('intval', (array) $req->query('size', [])))),
         'sort'       => in_array($req->query('sort'), ['newest', 'oldest']) ? $req->query('sort') : 'newest',
+        'search'     => trim((string) $req->query('search_val', '')),
     ];
 }
 
@@ -468,6 +469,12 @@ private function buildProductsQuery(array $f): \Illuminate\Database\Query\Builde
         $sizes = $f['sizes'];
         $query->whereExists(fn($q) => $q->select(DB::raw(1))->from('products_attr')
             ->whereColumn('products_attr.products_id', 'products.id')->whereIn('size_id', $sizes));
+    }
+
+    if (!empty($f['search'])) {
+        $term = $f['search'];
+        $query->where(fn($q) => $q->where('name', 'like', '%'.$term.'%')
+            ->orWhere('keyword', 'like', '%'.$term.'%'));
     }
 
     $query->orderBy('products.id', $f['sort'] === 'oldest' ? 'asc' : 'desc');
@@ -736,22 +743,59 @@ $color_id=DB::table('colors')->where('color',$color)->value('id');
 
 
 public function search(Request $req){
+    $filters = $this->parseProductFilters($req);
 
-   $search_val=$req->input('search_val');
+    $result['total']   = $this->buildProductsQuery($filters)->count();
+    $result['product'] = $this->buildProductsQuery($filters)->limit(10)->get();
+    $result['filters'] = $filters;
 
-   $result['product']=DB::table('products')
-   ->where('status', 1)
-  ->where('name', 'like', '%'.$search_val.'%')
-   ->orwhere('keyword','like','%'.$search_val.'%')
-   ->get();
+    $result['filter_brands']     = DB::table('brands')->where('status', 1)->get();
+    $result['filter_categories'] = DB::table('categories')->where('status', 1)->get();
+    $result['filter_colors']     = DB::table('colors')->where('status', 1)->get();
+    $result['filter_sizes']      = DB::table('sizes')->where('status', 1)->get();
 
-   foreach($result['product'] as $item1){
-    $result['product_attr'][$item1->id]=DB::table('products_attr')->leftJoin('sizes','sizes.id','=','products_attr.size_id')
-    ->leftJoin('colors','colors.id','=','products_attr.color_id')->where(['products_attr.products_id'=>$item1->id])->get();
+    foreach ($result['product'] as $item1) {
+        $result['product_attr'][$item1->id] = DB::table('products_attr')
+            ->leftJoin('sizes','sizes.id','=','products_attr.size_id')
+            ->leftJoin('colors','colors.id','=','products_attr.color_id')
+            ->where(['products_attr.products_id' => $item1->id])->get();
     }
 
-    
-   return view('front.search',$result);
+    $uid = session()->get('FRONT_USER_LOGIN');
+    $result['wishlist_ids'] = $uid
+        ? DB::table('wishlists')->where('user_id', $uid)->pluck('product_id')->toArray()
+        : [];
+
+    return view('front.search', $result);
+}
+
+public function search_more(Request $req){
+    $filters  = $this->parseProductFilters($req);
+    $offset   = max(0, (int) $req->query('offset', 10));
+
+    $total    = $this->buildProductsQuery($filters)->count();
+    $products = $this->buildProductsQuery($filters)->skip($offset)->limit(10)->get();
+
+    $html = '';
+    foreach ($products as $item) {
+        $attrs  = DB::table('products_attr')
+            ->leftJoin('sizes','sizes.id','=','products_attr.size_id')
+            ->leftJoin('colors','colors.id','=','products_attr.color_id')
+            ->where('products_attr.products_id', $item->id)->get();
+        $attr   = $attrs[0] ?? null;
+        $price  = $attr ? ($attr->price > 0 ? $attr->price : $attr->mrp) : 0;
+        $mrp    = $attr ? $attr->mrp : 0;
+        $qty    = $attr ? $attr->qty : 0;
+        $isSale = $attr && $attr->price > 0 && $attr->price < $attr->mrp;
+        $isOut  = $qty == 0;
+        $html  .= view('front._product_card', compact('item','price','mrp','qty','isSale','isOut'))->render();
+    }
+
+    return response()->json([
+        'html'        => $html,
+        'has_more'    => ($offset + count($products)) < $total,
+        'next_offset' => $offset + count($products),
+    ]);
 }
 
 

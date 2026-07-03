@@ -19,9 +19,9 @@ class CategorySeeder extends Seeder
             ['name' => 'Women\'s Wear',    'image' => 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=80&auto=format&fit=crop'],
             ['name' => 'Kids Wear',        'image' => 'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=700&q=80&auto=format&fit=crop'],
             ['name' => 'Formal Wear',      'image' => 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=700&q=80&auto=format&fit=crop'],
-            ['name' => 'Casual Wear',      'image' => 'https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=700&q=80&auto=format&fit=crop'],
-            ['name' => 'Bridal Collection','image' => 'https://images.unsplash.com/photo-1519657742521-4d683b746af9?w=700&q=80&auto=format&fit=crop'],
-            ['name' => 'Sports & Active',  'image' => 'https://images.unsplash.com/photo-1571731877695-6e95d2a5c3ef?w=700&q=80&auto=format&fit=crop'],
+            ['name' => 'Casual Wear',      'image' => 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=700&q=80&auto=format&fit=crop'],
+            ['name' => 'Bridal Collection','image' => 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=700&q=80&auto=format&fit=crop'],
+            ['name' => 'Sports & Active',  'image' => 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=700&q=80&auto=format&fit=crop'],
             ['name' => 'Winter Collection','image' => 'https://images.unsplash.com/photo-1548126032-079a0fb0099d?w=700&q=80&auto=format&fit=crop'],
         ];
 
@@ -46,57 +46,57 @@ class CategorySeeder extends Seeder
         // ── Sub-categories ────────────────────────────────────────────────────
         $children = [
             // Men's Wear
-            ['Shirts',        $parentIds["Men's Wear"]],
-            ['Trousers',      $parentIds["Men's Wear"]],
-            ['Suits',         $parentIds["Men's Wear"]],
-            ['Kurta Shalwar', $parentIds["Men's Wear"]],
-            ['Jackets',       $parentIds["Men's Wear"]],
+            ['Shirts',        $parentIds["Men's Wear"], '1602810318383-e386cc2a3ccf'],
+            ['Trousers',      $parentIds["Men's Wear"], '1624378439575-d8705ad7ae80'],
+            ['Suits',         $parentIds["Men's Wear"], '1507679799987-c73779587ccf'],
+            ['Kurta Shalwar', $parentIds["Men's Wear"], '1612336307429-8a898d10e223'],
+            ['Jackets',       $parentIds["Men's Wear"], '1551028719-00167b16eac5'],
 
             // Women's Wear
-            ['Shalwar Kameez',  $parentIds["Women's Wear"]],
-            ['Sarees',          $parentIds["Women's Wear"]],
-            ['Lehengas',        $parentIds["Women's Wear"]],
-            ['Tops & Blouses',  $parentIds["Women's Wear"]],
-            ['Abayas',          $parentIds["Women's Wear"]],
+            ['Shalwar Kameez',  $parentIds["Women's Wear"], '1612336307429-8a898d10e223'],
+            ['Sarees',          $parentIds["Women's Wear"], '1517841905240-472988babdf9'],
+            ['Lehengas',        $parentIds["Women's Wear"], '1517841905240-472988babdf9'],
+            ['Tops & Blouses',  $parentIds["Women's Wear"], '1490481651871-ab68de25d43d'],
+            ['Abayas',          $parentIds["Women's Wear"], '1612336307429-8a898d10e223'],
 
             // Kids Wear
-            ['Boys Clothing',   $parentIds['Kids Wear']],
-            ['Girls Clothing',  $parentIds['Kids Wear']],
-            ['Baby Clothing',   $parentIds['Kids Wear']],
+            ['Boys Clothing',   $parentIds['Kids Wear'], '1603126857149-08ea5c9b44e8'],
+            ['Girls Clothing',  $parentIds['Kids Wear'], '1519238263530-99bdd11df2ea'],
+            ['Baby Clothing',   $parentIds['Kids Wear'], '1519238263530-99bdd11df2ea'],
 
             // Formal Wear
-            ['Wedding Suits',   $parentIds['Formal Wear']],
-            ['Office Wear',     $parentIds['Formal Wear']],
-            ['Tuxedos',         $parentIds['Formal Wear']],
+            ['Wedding Suits',   $parentIds['Formal Wear'], '1517841905240-472988babdf9'],
+            ['Office Wear',     $parentIds['Formal Wear'], '1602810318383-e386cc2a3ccf'],
+            ['Tuxedos',         $parentIds['Formal Wear'], '1507679799987-c73779587ccf'],
 
             // Casual Wear
-            ['Jeans',           $parentIds['Casual Wear']],
-            ['T-Shirts',        $parentIds['Casual Wear']],
-            ['Hoodies',         $parentIds['Casual Wear']],
-            ['Shorts',          $parentIds['Casual Wear']],
+            ['Jeans',           $parentIds['Casual Wear'], '1542272604-787c3835535d'],
+            ['T-Shirts',        $parentIds['Casual Wear'], '1576566588028-4147f3842f27'],
+            ['Hoodies',         $parentIds['Casual Wear'], '1551028719-00167b16eac5'],
+            ['Shorts',          $parentIds['Casual Wear'], '1506629082955-511b1aa562c8'],
 
             // Bridal Collection
-            ['Bridal Lehenga',  $parentIds['Bridal Collection']],
-            ['Mehndi Dresses',  $parentIds['Bridal Collection']],
-            ['Bridal Gowns',    $parentIds['Bridal Collection']],
+            ['Bridal Lehenga',  $parentIds['Bridal Collection'], '1517841905240-472988babdf9'],
+            ['Mehndi Dresses',  $parentIds['Bridal Collection'], '1612336307429-8a898d10e223'],
+            ['Bridal Gowns',    $parentIds['Bridal Collection'], '1517841905240-472988babdf9'],
 
             // Sports & Active
-            ['Tracksuits',      $parentIds['Sports & Active']],
-            ['Sports Shorts',   $parentIds['Sports & Active']],
-            ['Gym Wear',        $parentIds['Sports & Active']],
+            ['Tracksuits',      $parentIds['Sports & Active'], '1506629082955-511b1aa562c8'],
+            ['Sports Shorts',   $parentIds['Sports & Active'], '1506629082955-511b1aa562c8'],
+            ['Gym Wear',        $parentIds['Sports & Active'], '1506629082955-511b1aa562c8'],
 
             // Winter Collection
-            ['Sweaters',        $parentIds['Winter Collection']],
-            ['Coats',           $parentIds['Winter Collection']],
-            ['Shawls',          $parentIds['Winter Collection']],
-            ['Sweatshirts',     $parentIds['Winter Collection']],
+            ['Sweaters',        $parentIds['Winter Collection'], '1608234808654-2a8875faa7fd'],
+            ['Coats',           $parentIds['Winter Collection'], '1548126032-079a0fb0099d'],
+            ['Shawls',          $parentIds['Winter Collection'], '1614786269829-d24616faf56d'],
+            ['Sweatshirts',     $parentIds['Winter Collection'], '1608234808654-2a8875faa7fd'],
         ];
 
-        foreach ($children as [$name, $parentId]) {
+        foreach ($children as $i => [$name, $parentId, $photoId]) {
             DB::table('categories')->insertOrIgnore([
                 'category_name'      => $name,
                 'category_slug'      => Str::slug($name),
-                'category_image'     => 'default-category.png',
+                'category_image'     => "https://images.unsplash.com/photo-{$photoId}?w=700&q=80&auto=format&fit=crop&sig={$i}",
                 'parent_category_id' => $parentId,
                 'is_home'            => rand(0, 1),
                 'status'             => 1,
