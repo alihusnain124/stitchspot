@@ -422,7 +422,7 @@
       </div>
 
       {{-- ── Mobile menu ── --}}
-      <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-100 shadow-md">
+      <div id="mobile-menu" class="lg:hidden bg-white border-t border-gray-100 shadow-md overflow-hidden max-h-0 opacity-0 transition-all duration-300 ease-in-out">
 
          {{-- User info strip at top of mobile menu --}}
          @if(session()->has('FRONT_USER_LOGIN'))
@@ -645,14 +645,26 @@
       const mobileMenu   = document.getElementById('mobile-menu');
       const hamburgerIcon = document.getElementById('hamburger-icon');
 
+      function openMobileMenu() {
+         mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+         mobileMenu.classList.remove('opacity-0');
+         mobileMenu.classList.add('opacity-100');
+         if (hamburgerIcon) hamburgerIcon.className = 'fa-solid fa-xmark text-[18px]';
+      }
+      function closeMobileMenu() {
+         mobileMenu.style.maxHeight = '0px';
+         mobileMenu.classList.remove('opacity-100');
+         mobileMenu.classList.add('opacity-0');
+         if (hamburgerIcon) hamburgerIcon.className = 'fa-solid fa-bars text-[18px]';
+      }
+      function isMobileMenuOpen() {
+         return mobileMenu.classList.contains('opacity-100');
+      }
+
       if (hamburger) {
          hamburger.addEventListener('click', e => {
             e.stopPropagation();
-            const open = !mobileMenu.classList.contains('hidden');
-            mobileMenu.classList.toggle('hidden', open);
-            hamburgerIcon.className = open
-               ? 'fa-solid fa-bars text-[18px]'
-               : 'fa-solid fa-xmark text-[18px]';
+            isMobileMenuOpen() ? closeMobileMenu() : openMobileMenu();
          });
       }
 
@@ -676,10 +688,9 @@
 
       document.addEventListener('click', e => {
          // Close mobile menu
-         if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+         if (mobileMenu && isMobileMenuOpen()) {
             if (hamburger && !hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
-               mobileMenu.classList.add('hidden');
-               if (hamburgerIcon) hamburgerIcon.className = 'fa-solid fa-bars text-[18px]';
+               closeMobileMenu();
             }
          }
          // Close search dropdown

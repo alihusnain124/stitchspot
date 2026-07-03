@@ -49,11 +49,11 @@
    <div class="flex gap-8">
 
       {{-- Overlay --}}
-      <div id="filter-overlay" onclick="toggleFilterPanel()" class="fixed inset-0 bg-black/50 z-[1050] hidden"></div>
+      <div id="filter-overlay" onclick="toggleFilterPanel()" class="fixed inset-0 bg-black/50 z-[1250] hidden"></div>
 
       {{-- ===== SIDEBAR ===== --}}
       <aside id="filter-panel"
-         class="fixed top-0 left-0 h-full w-[280px] bg-white z-[1100] overflow-y-auto shadow-xl transition-transform duration-300 -translate-x-full
+         class="fixed top-0 left-0 h-full w-[280px] bg-white z-[1300] overflow-y-auto shadow-xl transition-transform duration-300 -translate-x-full
                 lg:sticky lg:top-[88px] lg:h-auto lg:max-h-[calc(100vh-112px)] lg:w-[230px] lg:flex-none lg:bg-transparent lg:shadow-none lg:translate-x-0 lg:overflow-y-auto lg:self-start">
 
          {{-- Mobile header --}}
@@ -87,11 +87,11 @@
                </button>
                <div id="sec-sort" class="space-y-2.5">
                   @foreach(['newest' => 'Newest First', 'oldest' => 'Oldest First'] as $val => $label)
-                  <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <label class="ss-radio-label">
                      <input type="radio" name="sort" value="{{ $val }}"
-                        {{ $filters['sort'] === $val ? 'checked' : '' }}
-                        class="w-3.5 h-3.5 accent-[#C9A96E] cursor-pointer">
-                     <span class="font-body text-[13px] text-gray-600 group-hover:text-[#1A1A1A] transition-colors">{{ $label }}</span>
+                        {{ $filters['sort'] === $val ? 'checked' : '' }} class="ss-radio-input">
+                     <span class="ss-radio-circle"></span>
+                     <span class="font-body text-[13px] text-gray-600">{{ $label }}</span>
                   </label>
                   @endforeach
                </div>
@@ -330,6 +330,14 @@
    </div>{{-- /flex --}}
 </div>
 </section>
+
+<style>
+.ss-radio-label { display:flex; align-items:center; gap:10px; cursor:pointer; padding:5px 0; }
+.ss-radio-input { display:none; }
+.ss-radio-circle { width:16px; height:16px; border-radius:50%; border:2px solid #D1D5DB; flex-shrink:0; transition:border-color .15s; background:radial-gradient(circle, transparent 40%, transparent 40%); }
+.ss-radio-input:checked + .ss-radio-circle { border-color:#C9A96E; background:radial-gradient(circle, #C9A96E 40%, transparent 40%); }
+.ss-radio-label:hover .ss-radio-circle { border-color:#9CA3AF; }
+</style>
 
 @endsection
 

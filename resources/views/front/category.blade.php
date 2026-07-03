@@ -44,11 +44,11 @@
 
    <div class="flex gap-8">
 
-      <div id="filter-overlay" onclick="toggleFilterPanel()" class="fixed inset-0 bg-black/50 z-[1050] hidden"></div>
+      <div id="filter-overlay" onclick="toggleFilterPanel()" class="fixed inset-0 bg-black/50 z-[1250] hidden"></div>
 
       {{-- ===== SIDEBAR ===== --}}
       <aside id="filter-panel"
-         class="fixed top-0 left-0 h-full w-[280px] bg-white z-[1100] overflow-y-auto shadow-xl transition-transform duration-300 -translate-x-full
+         class="fixed top-0 left-0 h-full w-[280px] bg-white z-[1300] overflow-y-auto shadow-xl transition-transform duration-300 -translate-x-full
                 lg:sticky lg:top-[88px] lg:h-auto lg:max-h-[calc(100vh-112px)] lg:w-[230px] lg:flex-none lg:bg-transparent lg:shadow-none lg:translate-x-0 lg:overflow-y-auto lg:self-start">
 
          {{-- Mobile header --}}
