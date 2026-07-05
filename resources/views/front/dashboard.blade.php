@@ -117,6 +117,15 @@
                </span>
                @endif
             </button>
+            <button onclick="switchDashTab('messages', this)"
+               class="tab-btn px-6 py-3 font-body text-[11.5px] tracking-[0.12em] uppercase border-b-2 border-transparent text-gray-400 transition-colors hover:text-gold bg-transparent cursor-pointer">
+               Messages
+               @if(($unread_message_count ?? 0) > 0)
+               <span class="ml-1.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-gold text-[#1A1A1A] font-body font-bold text-[9px]">
+                  {{ $unread_message_count }}
+               </span>
+               @endif
+            </button>
          </div>
 
          {{-- ── Order Requests tab ── --}}
@@ -223,6 +232,41 @@
                <i class="fa-solid fa-scissors text-[52px] text-gray-200 mb-4 block"></i>
                <h3 class="font-display text-[22px] text-[#1A1A1A] mb-2">No Active Orders</h3>
                <p class="font-body text-[13.5px] text-gray-400">Confirmed orders will appear here.</p>
+            </div>
+            @endif
+         </div>
+
+         {{-- ── Messages tab ── --}}
+         <div id="tab-messages" class="tab-panel">
+            @if(isset($messages_preview[0]))
+            <div class="divide-y divide-gray-100 border border-gray-100 bg-white">
+               @foreach($messages_preview as $conv)
+               @php $mImg = $conv->other_image ? asset('storage/media/customer/'.$conv->other_image) : null; @endphp
+               <a href="{{ url('/messages/'.$conv->id) }}" class="flex items-center gap-4 p-4 hover:bg-[#F9F8F6] transition-colors">
+                  <div class="w-11 h-11 rounded-full overflow-hidden bg-[#F9F8F6] flex items-center justify-center shrink-0">
+                     @if($mImg)
+                        <img src="{{ $mImg }}" alt="{{ $conv->other_name }}" class="w-full h-full object-cover">
+                     @else
+                        <i class="fa-solid fa-circle-user text-gray-400 text-[18px]"></i>
+                     @endif
+                  </div>
+                  <div class="min-w-0 flex-1">
+                     <p class="font-body text-[13.5px] font-medium text-[#1A1A1A]">{{ $conv->other_name }}</p>
+                     <p class="font-body text-[12px] text-gray-400 truncate">{{ $conv->last_message ?? 'No messages yet' }}</p>
+                  </div>
+                  @if($conv->unread_count > 0)
+                  <span class="bg-gold text-white font-body font-bold text-[10px] min-w-[20px] h-5 rounded-full flex items-center justify-center px-1.5 shrink-0">
+                     {{ $conv->unread_count }}
+                  </span>
+                  @endif
+               </a>
+               @endforeach
+            </div>
+            @else
+            <div class="text-center py-16 bg-white border border-gray-100">
+               <i class="fa-regular fa-comments text-[52px] text-gray-200 mb-4 block"></i>
+               <h3 class="font-display text-[22px] text-[#1A1A1A] mb-2">No Conversations Yet</h3>
+               <p class="font-body text-[13.5px] text-gray-400">Messages from your customers will appear here.</p>
             </div>
             @endif
          </div>

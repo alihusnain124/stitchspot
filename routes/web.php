@@ -17,6 +17,7 @@ use App\Http\Controllers\admin\HomeBannerController;
 
 use  App\Http\Controllers\front\FrontController;
 use  App\Http\Controllers\front\StripePaymentController;
+use  App\Http\Controllers\front\MessageController;
 /*
 
 /*
@@ -54,6 +55,7 @@ use  App\Http\Controllers\front\StripePaymentController;
   Route::get('/category/{slug}/more',[FrontController::class,'categories_more']);
   Route::get('/category/{slug}',[FrontController::class,'categories']);
   Route::get('/contact',[FrontController::class,'contact']);
+  Route::view('/about','front.about');
   Route::get('/order_process',[FrontController::class,'order_process']);
   Route::get('/order_placed',[FrontController::class,'order_placed']);
   Route::get('/contact_process',[FrontController::class,'contact_process']);
@@ -69,7 +71,19 @@ use  App\Http\Controllers\front\StripePaymentController;
   Route::get('/account_no',[FrontController::class,'account_no']);
   Route::post('/wishlist/toggle',[FrontController::class,'wishlistToggle'])->name('wishlist.toggle');
   Route::get('/wishlist',[FrontController::class,'wishlist'])->name('wishlist');
-  
+
+  ///messaging
+  Route::get('/messages/search',[MessageController::class,'searchTailors']);
+  Route::post('/messages/{conversationId}/send',[MessageController::class,'send']);
+  Route::post('/messages/{conversationId}/read',[MessageController::class,'markRead']);
+  Route::post('/messages/{conversationId}/archive',[MessageController::class,'archive']);
+  Route::post('/broadcasting/auth',[MessageController::class,'broadcastAuth']);
+  Route::group(["middleware"=>"user_auth"], function () {
+    Route::get('/messages',[MessageController::class,'inbox']);
+    Route::get('/messages/start/{tailorId}',[MessageController::class,'start']);
+    Route::get('/messages/{conversationId}',[MessageController::class,'show']);
+  });
+
   
 
 

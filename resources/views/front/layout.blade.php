@@ -141,6 +141,9 @@
       img    { object-fit: cover; }
       footer { margin-bottom: 0 !important; padding-bottom: 0 !important; }
 
+      /* ── Kill style.css "form input/textarea" capitalize-as-you-type rule everywhere ── */
+      form input, form textarea, form select { text-transform: none !important; }
+
       /* ── Kill legacy style.css nav/span overrides ── */
       header nav { background: transparent !important; background-color: transparent !important; padding: 0 !important; height: auto !important; width: auto !important; }
       header nav span { color: inherit !important; }
@@ -288,23 +291,25 @@
             @if(session()->get('IS_TAILOR') == 'yes')
                {{-- Tailor links --}}
                <nav class="flex items-center h-full">
-                  <a href="{{ url('/customers_dashboard') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Dashboard</a>
-                  <a href="{{ url('/services') }}"            class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Services</a>
-                  <a href="{{ url('/form') }}"                class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Add Service</a>
+                  <a href="{{ url('/customers_dashboard') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('customers_dashboard') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Dashboard</a>
+                  <a href="{{ url('/services') }}"            class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('services') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Services</a>
+                  <a href="{{ url('/form') }}"                class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('form') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Add Service</a>
                </nav>
             @elseif(session()->has('FRONT_USER_LOGIN'))
                {{-- Logged-in customer links --}}
                <nav class="flex items-center h-full">
-                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Products</a>
-                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Services</a>
-                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Contact</a>
+                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('products') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Products</a>
+                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('services') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Services</a>
+                  <a href="{{ url('/about') }}"    class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('about') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">About</a>
+                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('contact') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Contact</a>
                </nav>
             @else
                {{-- Guest links --}}
                <nav class="flex items-center h-full">
-                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Products</a>
-                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Services</a>
-                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Contact</a>
+                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('products') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Products</a>
+                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('services') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Services</a>
+                  <a href="{{ url('/about') }}"    class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('about') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">About</a>
+                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('contact') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Contact</a>
                </nav>
             @endif
          </div>
@@ -314,6 +319,14 @@
 
             @if(session()->get('IS_TAILOR') == 'yes')
                {{-- Tailor right icons --}}
+               <a href="{{ url('/messages') }}" title="Messages"
+                  class="relative hidden lg:flex w-9 h-9 items-center justify-center text-gray-500 hover:text-gold transition-colors">
+                  <i class="fa-regular fa-comment-dots text-[17px]"></i>
+                  <span class="nav-messages-badge absolute top-[3px] right-[2px] bg-gold text-white font-body font-bold text-[8px] min-w-[15px] h-[15px] rounded-full flex items-center justify-center px-[3px] leading-none"
+                     style="{{ total_unread_messages() > 0 ? '' : 'display:none' }}">
+                     {{ total_unread_messages() }}
+                  </span>
+               </a>
                <a href="{{ url('/profile/' . $uid) }}" title="Profile"
                   class="hidden lg:flex w-9 h-9 items-center justify-center overflow-hidden rounded-full border-2 border-transparent hover:border-gold transition-all">
                   @if(session()->get('FRONT_USER_IMAGE'))
@@ -347,6 +360,16 @@
                      {{ total_wishlist_items() }}
                   </span>
                   @endif
+               </a>
+
+               {{-- Messages: desktop only --}}
+               <a href="{{ url('/messages') }}" title="Messages"
+                  class="relative hidden lg:flex w-9 h-9 items-center justify-center text-gray-500 hover:text-gold transition-colors">
+                  <i class="fa-regular fa-comment-dots text-[17px]"></i>
+                  <span class="nav-messages-badge absolute top-[3px] right-[2px] bg-gold text-white font-body font-bold text-[8px] min-w-[15px] h-[15px] rounded-full flex items-center justify-center px-[3px] leading-none"
+                     style="{{ total_unread_messages() > 0 ? '' : 'display:none' }}">
+                     {{ total_unread_messages() }}
+                  </span>
                </a>
                @endif
 
@@ -454,6 +477,11 @@
                <i class="fa-solid fa-scissors text-gold w-4 text-center text-sm"></i> Our Services
             </a>
             @if(session()->has('FRONT_USER_LOGIN'))
+            <a href="{{ url('/messages') }}" class="flex items-center gap-3 px-6 py-[14px] font-body text-[13px] text-gray-600 hover:text-gold hover:bg-gray-50 border-b border-gray-50 transition-colors">
+               <i class="fa-regular fa-comment-dots text-gold w-4 text-center text-sm"></i> Messages
+               <span class="nav-messages-badge ml-1 bg-gold text-white font-body font-bold text-[9px] px-2 py-0.5 rounded-full"
+                  style="{{ total_unread_messages() > 0 ? '' : 'display:none' }}">{{ total_unread_messages() }}</span>
+            </a>
             <a href="{{ url('/profile/' . $uid) }}" class="flex items-center gap-3 px-6 py-[14px] font-body text-[13px] text-gray-600 hover:text-gold hover:bg-gray-50 border-b border-gray-50 transition-colors">
                <i class="fa-solid fa-circle-user text-gold w-4 text-center text-sm"></i> My Profile
             </a>
@@ -486,6 +514,11 @@
                @if(total_wishlist_items() > 0)
                <span class="ml-1 bg-[#E63946] text-white font-body font-bold text-[9px] px-2 py-0.5 rounded-full">{{ total_wishlist_items() }}</span>
                @endif
+            </a>
+            <a href="{{ url('/messages') }}" class="flex items-center gap-3 px-6 py-[14px] font-body text-[13px] text-gray-600 hover:text-gold hover:bg-gray-50 border-b border-gray-50 transition-colors">
+               <i class="fa-regular fa-comment-dots text-gold w-4 text-center text-sm"></i> Messages
+               <span class="nav-messages-badge ml-1 bg-gold text-white font-body font-bold text-[9px] px-2 py-0.5 rounded-full"
+                  style="{{ total_unread_messages() > 0 ? '' : 'display:none' }}">{{ total_unread_messages() }}</span>
             </a>
             <a href="{{ url('/profile/' . $uid) }}" class="flex items-center gap-3 px-6 py-[14px] font-body text-[13px] text-gray-600 hover:text-gold hover:bg-gray-50 border-b border-gray-50 transition-colors">
                <i class="fa-solid fa-circle-user text-gold w-4 text-center text-sm"></i> My Account
@@ -574,7 +607,7 @@
             <div>
                <h5 class="font-body text-[11px] font-semibold tracking-[3px] uppercase text-gold mb-5">Quick Links</h5>
                <ul class="space-y-3">
-                  @foreach([['/', 'Home'],['/products','Products'],['/services','Our Services'],['/contact','Contact']] as [$u,$l])
+                  @foreach([['/', 'Home'],['/products','Products'],['/services','Our Services'],['/about','About Us'],['/contact','Contact']] as [$u,$l])
                   <li>
                      <a href="{{ url($u) }}" class="font-body text-[13px] text-white/40 hover:text-gold hover:pl-1 transition-all">{{ $l }}</a>
                   </li>
@@ -718,6 +751,56 @@
          SS.toast('error', @json(session('error')), '', 4000);
       @endif
    </script>
+
+   {{-- ── Site-wide new-message notifications (badge + toast), independent of the messages page ── --}}
+   @if(session()->has('FRONT_USER_LOGIN'))
+      @php
+         $pusherKey     = config('broadcasting.connections.pusher.key');
+         $pusherCluster = env('PUSHER_APP_CLUSTER');
+      @endphp
+      @if($pusherKey)
+      <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+      <script>
+      (function() {
+         function escapeHtml(str) {
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+         }
+         try {
+            window.pusherClient = window.pusherClient || new Pusher('{{ $pusherKey }}', {
+               cluster: '{{ $pusherCluster }}',
+               authEndpoint: '/broadcasting/auth',
+               auth: { headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content } }
+            });
+            var channel = window.pusherClient.subscribe('private-user.{{ (int) session('FRONT_USER_LOGIN') }}');
+            // Badge shows a count of unread CONVERSATIONS, not raw messages — only
+            // bump it the first time we see a given conversation go unread this session.
+            window._ssUnreadConvIds = window._ssUnreadConvIds || new Set();
+            channel.bind('message.sent', function(data) {
+               // If this exact conversation's thread is already open, it has its own
+               // live listener + is effectively being read — don't double-notify.
+               if (window.location.pathname === '/messages/' + data.conversation_id) return;
+
+               if (!window._ssUnreadConvIds.has(data.conversation_id)) {
+                  window._ssUnreadConvIds.add(data.conversation_id);
+                  document.querySelectorAll('.nav-messages-badge').forEach(function(badge) {
+                     badge.textContent = (parseInt(badge.textContent, 10) || 0) + 1;
+                     badge.style.display = '';
+                  });
+               }
+
+               if (window.SS && SS.toast) {
+                  SS.toast('info', 'New message', escapeHtml(data.sender_name) + ' sent you a message', 4500);
+               }
+            });
+         } catch (err) {
+            console.warn('Real-time message notifications unavailable.', err);
+         }
+      })();
+      </script>
+      @endif
+   @endif
 
    @yield('scripts')
 

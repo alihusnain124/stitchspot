@@ -75,6 +75,22 @@ function total_wishlist_items(){
    return DB::table('wishlists')->where('user_id', $user_id)->count();
 }
 
+function total_unread_messages(){
+   if(!session()->has('FRONT_USER_LOGIN')) return 0;
+   $user_id = session()->get('FRONT_USER_LOGIN');
+   // Count of conversations that have at least one unread message, not the raw message count.
+   return DB::table('messages')
+       ->join('conversations', 'messages.conversation_id', '=', 'conversations.id')
+       ->where(function($q) use ($user_id) {
+           $q->where('conversations.customer_id', $user_id)
+             ->orWhere('conversations.tailor_id', $user_id);
+       })
+       ->where('messages.sender_id', '!=', $user_id)
+       ->whereNull('messages.read_at')
+       ->distinct()
+       ->count('messages.conversation_id');
+}
+
 function prx($result){
    echo '<pre>';
    print_r($result);
