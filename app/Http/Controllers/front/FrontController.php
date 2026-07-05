@@ -1283,12 +1283,7 @@ public function add_to_cart_product(Request $req){
 
 
  public function contact(Request $req){
-    if($req->session()->has('FRONT_USER_LOGIN')){
-        return view('front.contact');
-    }else{
-        return redirect()->back()->with('cart_msg','Please login first for any Query');
-    }
-   
+    return view('front.contact');
  }
  
 
@@ -1403,6 +1398,10 @@ public function order_placed(Request $req){
 
 
 public function contact_process(Request $req){
+
+    if(!$req->session()->has('FRONT_USER_LOGIN')){
+        return response()->json(['status'=>'Error','msg'=>'Please login to send us a message.']);
+    }
 
     $user_id=$req->session()->get('FRONT_USER_LOGIN');
     $name=$req->input('name');

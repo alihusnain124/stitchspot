@@ -55,6 +55,7 @@ use  App\Http\Controllers\front\MessageController;
   Route::get('/category/{slug}/more',[FrontController::class,'categories_more']);
   Route::get('/category/{slug}',[FrontController::class,'categories']);
   Route::get('/contact',[FrontController::class,'contact']);
+  Route::view('/about','front.about');
   Route::get('/order_process',[FrontController::class,'order_process']);
   Route::get('/order_placed',[FrontController::class,'order_placed']);
   Route::get('/contact_process',[FrontController::class,'contact_process']);

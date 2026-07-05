@@ -291,23 +291,25 @@
             @if(session()->get('IS_TAILOR') == 'yes')
                {{-- Tailor links --}}
                <nav class="flex items-center h-full">
-                  <a href="{{ url('/customers_dashboard') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Dashboard</a>
-                  <a href="{{ url('/services') }}"            class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Services</a>
-                  <a href="{{ url('/form') }}"                class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Add Service</a>
+                  <a href="{{ url('/customers_dashboard') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('customers_dashboard') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Dashboard</a>
+                  <a href="{{ url('/services') }}"            class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('services') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Services</a>
+                  <a href="{{ url('/form') }}"                class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('form') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Add Service</a>
                </nav>
             @elseif(session()->has('FRONT_USER_LOGIN'))
                {{-- Logged-in customer links --}}
                <nav class="flex items-center h-full">
-                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Products</a>
-                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Services</a>
-                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Contact</a>
+                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('products') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Products</a>
+                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('services') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Services</a>
+                  <a href="{{ url('/about') }}"    class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('about') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">About</a>
+                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('contact') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Contact</a>
                </nav>
             @else
                {{-- Guest links --}}
                <nav class="flex items-center h-full">
-                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Products</a>
-                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Services</a>
-                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase text-gray-600 hover:text-gold h-full flex items-center border-b-2 border-transparent hover:border-gold transition-all duration-200">Contact</a>
+                  <a href="{{ url('/products') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('products') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Products</a>
+                  <a href="{{ url('/services') }}" class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('services') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Services</a>
+                  <a href="{{ url('/about') }}"    class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('about') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">About</a>
+                  <a href="{{ url('/contact') }}"  class="px-5 font-body text-[11.5px] tracking-[0.14em] uppercase h-full flex items-center border-b-2 transition-all duration-200 {{ request()->is('contact') ? 'text-gold border-gold' : 'text-gray-600 hover:text-gold border-transparent hover:border-gold' }}">Contact</a>
                </nav>
             @endif
          </div>
@@ -605,7 +607,7 @@
             <div>
                <h5 class="font-body text-[11px] font-semibold tracking-[3px] uppercase text-gold mb-5">Quick Links</h5>
                <ul class="space-y-3">
-                  @foreach([['/', 'Home'],['/products','Products'],['/services','Our Services'],['/contact','Contact']] as [$u,$l])
+                  @foreach([['/', 'Home'],['/products','Products'],['/services','Our Services'],['/about','About Us'],['/contact','Contact']] as [$u,$l])
                   <li>
                      <a href="{{ url($u) }}" class="font-body text-[13px] text-white/40 hover:text-gold hover:pl-1 transition-all">{{ $l }}</a>
                   </li>
