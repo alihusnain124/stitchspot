@@ -80,20 +80,22 @@
                {{-- Remove from wishlist --}}
                <button onclick="removeFromWishlist(this, {{ $item->id }})"
                   title="Remove from wishlist"
-                  class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer z-30 transition-all border-none text-[#E63946] hover:bg-[#E63946] hover:text-white opacity-0 group-hover:opacity-100">
+                  class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer z-30 transition-all border-none text-[#E63946] hover:bg-[#E63946] hover:text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
                   <i class="fa-solid fa-heart text-[13px]"></i>
                </button>
 
-               {{-- Image --}}
+               {{-- Image (tap/click goes straight to product details) --}}
                @php $wImg = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
-               <img src="{{ $wImg }}" alt="{{ $item->name }}"
-                    class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    onerror="this.onerror=null;this.src='{{ asset('front-assets/images/slider-bg.jpg') }}'">
+               <a href="{{ url('/product-details/'.$item->id) }}" class="block w-full h-full">
+                  <img src="{{ $wImg }}" alt="{{ $item->name }}"
+                       class="w-full h-full object-cover object-top lg:group-hover:scale-105 transition-transform duration-500"
+                       loading="lazy"
+                       onerror="this.onerror=null;this.src='{{ asset('front-assets/images/slider-bg.jpg') }}'">
+               </a>
 
-               {{-- Hover overlay --}}
+               {{-- Hover overlay (desktop only) --}}
                @if(!$isOut)
-               <div class="absolute inset-0 bg-[#1A1A1A]/82 flex flex-col items-center justify-center gap-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+               <div class="absolute inset-0 bg-[#1A1A1A]/82 flex flex-col items-center justify-center gap-2.5 opacity-0 pointer-events-none lg:group-hover:opacity-100 lg:group-hover:pointer-events-auto transition-opacity duration-300 z-20">
                   <a href="{{ url('/product-details/'.$item->id) }}"
                      class="flex items-center justify-center w-40 h-10 bg-white text-[#1A1A1A] font-body text-[11px] font-semibold tracking-[1.5px] uppercase hover:bg-gold hover:text-white transition-all">
                      <i class="fa-regular fa-eye mr-1"></i> View Details

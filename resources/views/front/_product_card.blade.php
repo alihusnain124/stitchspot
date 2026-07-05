@@ -31,19 +31,21 @@
       @endif
 
       {{-- Wishlist --}}
-      <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer z-10 opacity-0 group-hover:opacity-100 transition-all hover:bg-[#E63946] hover:text-white text-gray-500 text-[13px] border-none" title="Wishlist">
+      <button class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center cursor-pointer z-10 opacity-0 lg:group-hover:opacity-100 transition-all hover:bg-[#E63946] hover:text-white text-gray-500 text-[13px] border-none pointer-events-none lg:group-hover:pointer-events-auto" title="Wishlist">
          <i class="fa-regular fa-heart"></i>
       </button>
 
-      {{-- Image --}}
+      {{-- Image (tap/click goes straight to product details) --}}
       @php $imgSrc = str_starts_with($item->image ?? '', 'http') ? $item->image : asset('/storage/media/'.$item->image); @endphp
-      <img src="{{ $imgSrc }}" alt="{{ $item->name }}"
-           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-           loading="lazy">
+      <a href="{{ url('/product-details/'.$item->id) }}" class="block w-full h-full">
+         <img src="{{ $imgSrc }}" alt="{{ $item->name }}"
+              class="w-full h-full object-cover lg:group-hover:scale-105 transition-transform duration-500"
+              loading="lazy">
+      </a>
 
-      {{-- Hover overlay --}}
+      {{-- Hover overlay (desktop only) --}}
       @if(!$isOut)
-         <div class="absolute inset-0 bg-[#1A1A1A]/82 flex flex-col items-center justify-center gap-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+         <div class="absolute inset-0 bg-[#1A1A1A]/82 flex flex-col items-center justify-center gap-2.5 opacity-0 pointer-events-none lg:group-hover:opacity-100 lg:group-hover:pointer-events-auto transition-opacity duration-300 z-20">
             @if($hasQV)
                <button onclick="openQuickView(this.closest('[data-id]'))"
                   class="w-40 h-10 bg-white text-[#1A1A1A] font-body text-[11px] font-semibold tracking-[1.5px] uppercase border-none cursor-pointer hover:bg-gold hover:text-white transition-all">
