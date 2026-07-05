@@ -1,3 +1,23 @@
+/* Shared image-upload guard: rejects non-images and files over the size limit.
+   Call from any <input type="file"> onchange before doing anything else with it. */
+function ssValidateImageFile(input, maxMB) {
+    maxMB = maxMB || 2;
+    var file = input.files && input.files[0];
+    if (!file) return true;
+
+    if (file.type.indexOf('image/') !== 0) {
+        if (window.SS && SS.toast) SS.toast('error', 'Invalid file', 'Please choose an image file.');
+        input.value = '';
+        return false;
+    }
+    if (file.size > maxMB * 1024 * 1024) {
+        if (window.SS && SS.toast) SS.toast('error', 'Image too large', 'Please choose an image under ' + maxMB + 'MB.');
+        input.value = '';
+        return false;
+    }
+    return true;
+}
+
 function toggleElement() {
     var element = document.getElementById("nav-items-js");
     if (element.classList.contains("nav-items")) {

@@ -1448,7 +1448,61 @@ public function form(Request $req){
 
     return view('front.multi-form',$result);
 }
- 
+
+public function edit_service(Request $req,$id){
+    $service=DB::table('services')->where('id',$id)->first();
+
+    if(!$service || $service->user_id != session()->get('FRONT_USER_LOGIN')){
+        return redirect('/customers_dashboard')->with('error','You can only edit your own services.');
+    }
+
+    $result['category']=DB::table('categories')->where('status',1)->get();
+    $result['service']=$service;
+
+    return view('front.multi-form',$result);
+}
+
+public function edit_service_process(Request $req,$id){
+    $service=DB::table('services')->where('id',$id)->first();
+
+    if(!$service || $service->user_id != session()->get('FRONT_USER_LOGIN')){
+        return redirect('/customers_dashboard')->with('error','You can only edit your own services.');
+    }
+
+    $data=[
+        'title'=>$req->input('service_title'),
+        'category'=>$req->input('category'),
+        'tags'=>$req->input('tags'),
+        'max_price'=>$req->input('max_price'),
+        'min_price'=>$req->input('min_price'),
+        'max_delivery_time'=>$req->input('max_delivery_time'),
+        'min_delivery_time'=>$req->input('min_delivery_time'),
+        'desc'=>$req->input('desc'),
+        'requirement'=>$req->input('requirement'),
+    ];
+
+    if($req->hasfile('image')){
+        $image=$req->file('image');
+
+        if($image->getSize() > 2 * 1024 * 1024){
+            return redirect()->back()->with('error','Image must be under 2MB.');
+        }
+
+        if($service->image!='' && Storage::exists('public/media/services/'.$service->image)){
+            Storage::delete('public/media/services/'.$service->image);
+        }
+
+        $ext=$image->extension();
+        $image_name=time().'.'.$ext;
+        $image->storeAs('/public/media/services/',$image_name);
+        $data['image']=$image_name;
+    }
+
+    DB::table('services')->where('id',$id)->update($data);
+
+    return redirect('/profile/'.session()->get('FRONT_USER_LOGIN'))->with('msg','Service has been updated successfully');
+}
+
 
 public function add_service(Request $req){
 
@@ -1479,6 +1533,11 @@ public function add_service(Request $req){
   if($req->hasfile('image')){
 
     $image=$req->file('image');
+
+    if($image->getSize() > 2 * 1024 * 1024){
+        return redirect()->back()->with('error','Image must be under 2MB.');
+    }
+
     $ext=$image->extension();
     $image_name=time().'.'.$ext;
     $image->storeAs('/public/media/services/',$image_name);

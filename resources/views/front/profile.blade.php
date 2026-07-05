@@ -186,20 +186,27 @@
             @if(isset($services[$u->id]) && count($services[$u->id]) > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                @foreach($services[$u->id] as $item)
-               <a href="{{ url('/service-details/'.$item->id) }}"
-                  class="group bg-white border border-gray-100 hover:shadow-lg transition-all duration-300 block">
-                  <div class="overflow-hidden bg-gray-100" style="aspect-ratio:4/3">
-                     <img src="{{ asset('/storage/media/services/'.$item->image) }}"
-                          alt="{{ $item->title }}"
-                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                  </div>
-                  <div class="p-4">
-                     <h4 class="font-body text-[13.5px] font-medium text-[#1A1A1A] leading-snug mb-2 line-clamp-2">
-                        {{ Str::substr($item->title, 0, 50) }}…
-                     </h4>
-                     <span class="font-body text-[13px] font-semibold text-gold">Rs {{ number_format($item->min_price) }}</span>
-                  </div>
-               </a>
+               <div class="relative group bg-white border border-gray-100 hover:shadow-lg transition-all duration-300">
+                  <a href="{{ url('/service-details/'.$item->id) }}" class="block">
+                     <div class="overflow-hidden bg-gray-100" style="aspect-ratio:4/3">
+                        <img src="{{ asset('/storage/media/services/'.$item->image) }}"
+                             alt="{{ $item->title }}"
+                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                     </div>
+                     <div class="p-4">
+                        <h4 class="font-body text-[13.5px] font-medium text-[#1A1A1A] leading-snug mb-2 line-clamp-2">
+                           {{ Str::substr($item->title, 0, 50) }}…
+                        </h4>
+                        <span class="font-body text-[13px] font-semibold text-gold">Rs {{ number_format($item->min_price) }}</span>
+                     </div>
+                  </a>
+                  @if(session()->get('FRONT_USER_LOGIN') == $u->id)
+                  <a href="{{ url('/edit_service/'.$item->id) }}" title="Edit Service"
+                     class="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-gray-600 hover:bg-gold hover:text-white transition-all shadow-sm">
+                     <i class="fa-solid fa-pen text-[12px]"></i>
+                  </a>
+                  @endif
+               </div>
                @endforeach
             </div>
             @else

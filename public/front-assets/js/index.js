@@ -11,7 +11,11 @@ let experienceNum = 1;
 
 if (btnComplete) {
     btnComplete.addEventListener("click", () => {
-        const form = document.querySelector('form');
+        // Must be the form this button actually belongs to — the page layout's
+        // header search form also renders a <form> earlier in the DOM, and a
+        // bare document.querySelector('form') would grab that one instead,
+        // submitting the wrong form (dropping all fields, including the image).
+        const form = btnComplete.closest('form');
         if (form) form.submit();
     });
 }

@@ -179,6 +179,7 @@
 @section('scripts')
 <script>
 function previewAvatar(input) {
+   if (!ssValidateImageFile(input, 2)) return;
    if (input.files && input.files[0]) {
       var reader = new FileReader();
       reader.onload = function(e) {

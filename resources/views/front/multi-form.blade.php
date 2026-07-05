@@ -1,5 +1,5 @@
 @extends('front.layout')
-@section('title', 'Add Service – StitchSpot')
+@section('title', (isset($service) ? 'Edit Service' : 'Add Service') . ' – StitchSpot')
 
 @section('extra-css')
    /* Step visibility — toggled by index.js */
@@ -13,6 +13,7 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 40px;
+      counter-reset: progress-step-counter;
    }
    .progress-bar::before {
       content: '';
@@ -45,7 +46,8 @@
       gap: 6px;
    }
    .progress-step::before {
-      content: '';
+      counter-increment: progress-step-counter;
+      content: counter(progress-step-counter);
       width: 28px;
       height: 28px;
       border-radius: 50%;
@@ -54,11 +56,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: #9CA3AF;
       transition: all .3s ease;
    }
    .progress-step.active::before {
       background: #C9A96E;
       border-color: #C9A96E;
+      color: #fff;
    }
    .progress-step::after {
       content: attr(data-title);
@@ -82,9 +89,9 @@
    <div class="relative z-10 max-w-[1280px] mx-auto px-4 lg:px-8">
       <p class="font-body text-[10.5px] tracking-[4px] uppercase text-[#C9A96E] mb-2">
          <a href="{{ url('/customers_dashboard') }}" class="hover:text-white transition-colors">Dashboard</a>
-         <span class="mx-2 text-white/30">/</span> Add Service
+         <span class="mx-2 text-white/30">/</span> {{ isset($service) ? 'Edit Service' : 'Add Service' }}
       </p>
-      <h1 class="font-display text-white text-[clamp(24px,3.5vw,40px)] font-semibold">Create a New Service</h1>
+      <h1 class="font-display text-white text-[clamp(24px,3.5vw,40px)] font-semibold">{{ isset($service) ? 'Edit Your Service' : 'Create a New Service' }}</h1>
    </div>
 </div>
 
@@ -103,7 +110,7 @@
          <div class="progress-step"        data-title="Publish"></div>
       </div>
 
-      <form action="{{ url('add_service') }}" method="POST" class="form" enctype="multipart/form-data">
+      <form action="{{ isset($service) ? url('/edit_service/'.$service->id) : url('add_service') }}" method="POST" class="form" enctype="multipart/form-data">
          @csrf
 
          {{-- ══ STEP 1: Service Info ══ --}}
@@ -117,7 +124,7 @@
                   <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">
                      Service Title <span class="text-[#C9A96E]">*</span>
                   </label>
-                  <input type="text" name="service_title" placeholder="e.g. Custom Shalwar Kameez Stitching"
+                  <input type="text" name="service_title" value="{{ $service->title ?? '' }}" placeholder="e.g. Custom Shalwar Kameez Stitching"
                      class="w-full h-[48px] px-4 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors leading-[48px] py-0">
                </div>
 
@@ -130,7 +137,7 @@
                         class="w-full h-[48px] px-4 pr-9 font-body text-sm text-[#1A1A1A] bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors appearance-none cursor-pointer py-0">
                         <option value="">Select a category…</option>
                         @foreach($category as $item)
-                        <option value="{{ $item->id }}">{{ $item->category_name }}</option>
+                        <option value="{{ $item->id }}" {{ (isset($service) && $service->category == $item->id) ? 'selected' : '' }}>{{ $item->category_name }}</option>
                         @endforeach
                      </select>
                      <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-[10px] pointer-events-none"></i>
@@ -182,7 +189,7 @@
                      <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Min Price (Rs) <span class="text-[#C9A96E]">*</span></label>
                      <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
                         <span class="font-body text-[12px] text-gray-400 mr-2">Rs</span>
-                        <input type="number" name="min_price" placeholder="500"
+                        <input type="number" name="min_price" value="{{ $service->min_price ?? '' }}" placeholder="500"
                            class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
@@ -190,7 +197,7 @@
                      <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Max Price (Rs) <span class="text-[#C9A96E]">*</span></label>
                      <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
                         <span class="font-body text-[12px] text-gray-400 mr-2">Rs</span>
-                        <input type="number" name="max_price" placeholder="5000"
+                        <input type="number" name="max_price" value="{{ $service->max_price ?? '' }}" placeholder="5000"
                            class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
@@ -201,7 +208,7 @@
                      <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Min Delivery (days) <span class="text-[#C9A96E]">*</span></label>
                      <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
                         <i class="fa-solid fa-clock text-gray-300 text-[11px] mr-2"></i>
-                        <input type="number" name="min_delivery_time" placeholder="3"
+                        <input type="number" name="min_delivery_time" value="{{ $service->min_delivery_time ?? '' }}" placeholder="3"
                            class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
@@ -209,7 +216,7 @@
                      <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Max Delivery (days) <span class="text-[#C9A96E]">*</span></label>
                      <div class="flex items-center w-full h-[48px] px-3 bg-white border border-gray-200 focus-within:border-[#1A1A1A] transition-colors">
                         <i class="fa-solid fa-clock text-gray-300 text-[11px] mr-2"></i>
-                        <input type="number" name="max_delivery_time" placeholder="14"
+                        <input type="number" name="max_delivery_time" value="{{ $service->max_delivery_time ?? '' }}" placeholder="14"
                            class="flex-1 w-full font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-transparent border-none outline-none focus:ring-0 p-0 m-0">
                      </div>
                   </div>
@@ -244,12 +251,12 @@
                      Service Description <span class="text-[#C9A96E]">*</span>
                   </label>
                   <textarea name="desc" rows="6" placeholder="Describe your service in detail — what's included, your process, quality guarantees…"
-                     class="w-full px-4 py-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors resize-none"></textarea>
+                     class="w-full px-4 py-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors resize-none">{{ $service->desc ?? '' }}</textarea>
                </div>
                <div>
                   <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">Requirements from Customer</label>
                   <textarea name="requirement" rows="4" placeholder="What measurements, fabric, or photos do you need from the customer?"
-                     class="w-full px-4 py-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors resize-none"></textarea>
+                     class="w-full px-4 py-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 bg-white border border-gray-200 outline-none focus:border-[#1A1A1A] transition-colors resize-none">{{ $service->requirement ?? '' }}</textarea>
                </div>
             </div>
 
@@ -267,7 +274,17 @@
          <div class="form-step">
             <p class="font-body text-[10.5px] tracking-[4px] uppercase text-gray-400 mb-1">Step 4 of 5</p>
             <h2 class="font-display text-[28px] font-semibold text-[#1A1A1A] mb-1">Service Photo</h2>
-            <p class="font-body text-sm text-gray-400 mb-8">Add a cover image for your service listing.</p>
+            <p class="font-body text-sm text-gray-400 mb-8">
+               {{ isset($service) ? "Upload a new photo to replace the current one, or leave this blank to keep it." : 'Add a cover image for your service listing.' }}
+            </p>
+
+            <div class="mb-5" id="photo-preview-wrap" style="{{ (isset($service) && $service->image) ? '' : 'display:none' }}">
+               <p class="font-body text-[10.5px] tracking-[2px] uppercase text-gray-400 mb-2" id="photo-preview-label">Current Photo</p>
+               <img id="photo-preview-img"
+                    src="{{ (isset($service) && $service->image) ? asset('/storage/media/services/'.$service->image) : '' }}"
+                    alt="Service photo preview"
+                    class="w-full object-cover border border-gray-100" style="aspect-ratio:4/3;max-width:280px">
+            </div>
 
             <div class="experiences-group">
                <div class="experience-item">
@@ -275,10 +292,10 @@
                          id="drop-zone">
                      <i class="fa-solid fa-cloud-arrow-up text-[40px] text-gray-300 mb-3 block"></i>
                      <p class="font-body text-[13px] text-gray-400 mb-1">Click to upload or drag &amp; drop</p>
-                     <p class="font-body text-[11px] text-gray-300">JPG, PNG, WEBP — recommended 800×600px</p>
+                     <p class="font-body text-[11px] text-gray-300">JPG, PNG, WEBP — max 2MB, recommended 800×600px</p>
                      <p id="file-name" class="font-body text-[12px] text-[#C9A96E] mt-3 hidden"></p>
-                     <input type="file" name="image" accept="image/*" class="hidden"
-                        onchange="document.getElementById('file-name').textContent = this.files[0]?.name; document.getElementById('file-name').classList.remove('hidden')">
+                     <input type="file" name="image" accept="image/*" class="hidden" id="service-image-input"
+                        onchange="handleServiceImageChange(this)">
                   </label>
                </div>
             </div>
@@ -322,7 +339,7 @@
                <a class="btn-prev inline-flex items-center gap-2 border border-gray-300 text-gray-500 font-body text-[11px] tracking-[0.2em] uppercase px-6 h-11 hover:border-[#1A1A1A] hover:text-[#1A1A1A] transition-colors cursor-pointer bg-white">
                   <i class="fa-solid fa-arrow-left text-[9px]"></i> Back
                </a>
-               <input type="submit" name="complete" value="Publish Service"
+               <input type="submit" name="complete" value="{{ isset($service) ? 'Save Changes' : 'Publish Service' }}"
                   class="btn-complete inline-flex items-center justify-center gap-2 bg-[#1A1A1A] text-white font-body font-semibold text-[11px] tracking-[0.2em] uppercase px-10 h-11 hover:bg-[#C9A96E] transition-colors cursor-pointer border-none shadow-md">
             </div>
          </div>
@@ -335,11 +352,35 @@
 
 @endsection
 
+@php
+   $existingTags = [];
+   if (isset($service) && $service->tags) {
+      $existingTags = array_values(array_filter(array_map('trim', explode(',', $service->tags))));
+   }
+@endphp
+
 @section('scripts')
 <script>
+function handleServiceImageChange(input) {
+   if (!ssValidateImageFile(input, 2)) return;
+
+   const file = input.files && input.files[0];
+   document.getElementById('file-name').textContent = file ? file.name : '';
+   document.getElementById('file-name').classList.remove('hidden');
+
+   if (file) {
+      const previewWrap  = document.getElementById('photo-preview-wrap');
+      const previewImg    = document.getElementById('photo-preview-img');
+      const previewLabel  = document.getElementById('photo-preview-label');
+      previewImg.src = URL.createObjectURL(file);
+      previewLabel.textContent = 'New Photo (not yet saved)';
+      previewWrap.style.display = '';
+   }
+}
+
 /* ── Tag chip system ── */
 const MAX_TAGS = 5;
-let tags = [];
+let tags = @json($existingTags);
 
 function renderTags() {
    const box   = document.getElementById('tag-box');
@@ -403,6 +444,8 @@ function removeTag(idx) {
 function escHtml(str) {
    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
+
+renderTags();
 </script>
 <script src="{{ asset('front-assets/js/index.js') }}"></script>
 @endsection

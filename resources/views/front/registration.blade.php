@@ -264,7 +264,7 @@
                      <i class="fa-solid fa-camera text-gray-300 text-sm"></i>
                      <span id="photo-label" class="font-body text-sm text-gray-400">Choose photo…</span>
                      <input type="file" name="image" id="image" accept="image/*" class="hidden"
-                        onchange="document.getElementById('photo-label').textContent = this.files[0]?.name || 'Choose photo…'">
+                        onchange="if(ssValidateImageFile(this,2)) document.getElementById('photo-label').textContent = this.files[0]?.name || 'Choose photo…'">
                   </label>
                   <span class="field_error" id="image_error"></span>
                </div>

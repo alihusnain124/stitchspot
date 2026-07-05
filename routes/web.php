@@ -61,6 +61,8 @@ use  App\Http\Controllers\front\MessageController;
   Route::get('/contact_process',[FrontController::class,'contact_process']);
   Route::get('/form',[FrontController::class,'form']);
   Route::post('/add_service',[FrontController::class,'add_service']);
+  Route::get('/edit_service/{id}',[FrontController::class,'edit_service']);
+  Route::post('/edit_service/{id}',[FrontController::class,'edit_service_process']);
   Route::get('/edit_profile/{id}',[FrontController::class,'editprofile']);
   Route::get('/customers_dashboard',[FrontController::class,'dashboard']);
   Route::get('/services',[FrontController::class,'services']);
