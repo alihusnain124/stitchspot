@@ -1545,7 +1545,18 @@ public function dashboard(Request $req){
 
      $result['active_orders']=DB::table('confirm_orders')->where(['service_user_id'=>$id,'is_paid'=>'yes','status'=>'processing'])->get();
 
-
+     $result['messages_preview'] = DB::table('conversations')->where('tailor_id', $id)
+         ->orderByRaw('last_message_at IS NULL, last_message_at DESC')->get();
+     foreach ($result['messages_preview'] as $conv) {
+        $customer = DB::table('customers')->where('id', $conv->customer_id)->first();
+        $conv->other_name  = $customer->name ?? 'Unknown';
+        $conv->other_image = $customer->image ?? null;
+        $conv->unread_count = DB::table('messages')->where('conversation_id', $conv->id)
+            ->where('sender_id', '!=', $id)->whereNull('read_at')->count();
+        $conv->last_message = DB::table('messages')->where('conversation_id', $conv->id)
+            ->orderByDesc('created_at')->value('body');
+     }
+     $result['unread_message_count'] = collect($result['messages_preview'])->sum('unread_count');
 
 
 
