@@ -31,6 +31,9 @@ else
     echo "==> Skipping migrations (RUN_MIGRATIONS=${RUN_MIGRATIONS})"
 fi
 
+echo "==> Discovering packages"
+php artisan package:discover --ansi
+
 echo "==> Caching routes and views"
 # NOTE: deliberately no `config:cache`. This app calls env() directly in
 # StripePaymentController, MessageController and several Blade views, and those
