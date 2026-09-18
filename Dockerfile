@@ -16,34 +16,16 @@ RUN npm run build
 
 
 # ─────────────────────────────────────────────────────────────
-# 2. PHP dependencies
+# 2. Base PHP image, shared by the dependency and runtime stages
+#
+#    Composer resolves against whatever PHP it runs on, so the
+#    dependencies must be installed on the same 8.2 runtime the app
+#    is served with. The composer:2 image ships a much newer PHP,
+#    which this project's packages (nette/schema, via laravel) reject.
 # ─────────────────────────────────────────────────────────────
-FROM composer:2 AS vendor
-
-WORKDIR /app
-
-# Installed without scripts first so the cache layer survives source changes.
-COPY composer.json composer.lock ./
-RUN composer install \
-        --no-dev \
-        --no-scripts \
-        --no-autoloader \
-        --prefer-dist \
-        --no-interaction
-
-COPY . .
-RUN composer dump-autoload --optimize --no-dev
-
-
-# ─────────────────────────────────────────────────────────────
-# 3. Runtime: nginx + php-fpm under supervisor
-# ─────────────────────────────────────────────────────────────
-FROM php:8.2-fpm-alpine AS runtime
+FROM php:8.2-fpm-alpine AS base
 
 RUN apk add --no-cache \
-        nginx \
-        supervisor \
-        gettext \
         libpng \
         libjpeg-turbo \
         libwebp \
@@ -66,6 +48,51 @@ RUN apk add --no-cache \
         bcmath \
         zip \
     && apk del .build-deps
+
+# Fail the build here, with a clear message, rather than at runtime if the
+# base image ever stops shipping one of these built in.
+RUN php -r '$need = ["gd","exif","pdo_mysql","bcmath","zip","mbstring","iconv","curl","openssl","fileinfo","tokenizer","dom","session","ctype","json","filter","libxml","hash","pcre"]; \
+    $missing = array_values(array_filter($need, fn($e) => ! extension_loaded($e))); \
+    if ($missing) { fwrite(STDERR, "Missing PHP extensions: ".implode(", ", $missing)."\n"); exit(1); } \
+    echo "All required PHP extensions present\n";'
+
+
+# ─────────────────────────────────────────────────────────────
+# 3. PHP dependencies, resolved on PHP 8.2
+# ─────────────────────────────────────────────────────────────
+FROM base AS vendor
+
+# Only the composer binary is taken from that image, never its PHP.
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+RUN apk add --no-cache git unzip
+
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+WORKDIR /app
+
+# Installed without scripts first so the cache layer survives source changes.
+COPY composer.json composer.lock ./
+RUN composer install \
+        --no-dev \
+        --no-scripts \
+        --no-autoloader \
+        --prefer-dist \
+        --no-progress \
+        --no-interaction
+
+COPY . .
+# --no-scripts: the post-autoload-dump hook runs `artisan package:discover`,
+# which needs the app's environment. That happens in the entrypoint instead.
+RUN composer dump-autoload --optimize --no-dev --no-scripts
+
+
+# ─────────────────────────────────────────────────────────────
+# 4. Runtime: nginx + php-fpm under supervisor
+# ─────────────────────────────────────────────────────────────
+FROM base AS runtime
+
+RUN apk add --no-cache nginx supervisor gettext
 
 WORKDIR /var/www/html
 
