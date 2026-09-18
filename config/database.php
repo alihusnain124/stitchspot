@@ -2,6 +2,33 @@
 
 use Illuminate\Support\Str;
 
+/*
+| Aiven (and other managed MySQL providers) only accept SSL connections.
+| MYSQL_ATTR_SSL_CA may be given as a path relative to the project root,
+| e.g. database/certs/aiven-ca.pem, since PDO itself requires an absolute path.
+*/
+$sslCa = env('MYSQL_ATTR_SSL_CA');
+
+if ($sslCa && ! str_starts_with($sslCa, DIRECTORY_SEPARATOR)) {
+    $sslCa = base_path($sslCa);
+}
+
+/*
+| Aiven serves a certificate whose common name is the service name rather than
+| the connection hostname, so hostname verification has to be disabled. The CA
+| above is still validated, so the connection remains encrypted and trusted.
+*/
+$sslOptions = [];
+
+if ($sslCa) {
+    $sslOptions[PDO::MYSQL_ATTR_SSL_CA] = $sslCa;
+
+    if (! env('MYSQL_ATTR_SSL_VERIFY_SERVER_CERT', true)
+        && defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+        $sslOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+    }
+}
+
 return [
 
     /*
@@ -58,9 +85,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            'options' => extension_loaded('pdo_mysql') ? $sslOptions : [],
         ],
 
         'pgsql' => [
