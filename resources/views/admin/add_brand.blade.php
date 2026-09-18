@@ -32,13 +32,12 @@ $checked = '';
           @enderror
         </div>
         <div class="col-md-6">
-          <label class="adm-label">Brand Image</label>
-          <input type="file" id="brand_image" name="brand_image" class="adm-input">
-          @if ($brand_image != '')
-            <img class="mt-2" width="80px" src="{{ str_starts_with($brand_image, 'http') ? $brand_image : asset('/storage/media/brand/'.$brand_image) }}" alt="">
-          @endif
+          <x-image-upload
+            name="brand_image"
+            label="Brand Image"
+            :value="$brand_image != '' ? (str_starts_with($brand_image, 'http') ? $brand_image : asset('/storage/media/brand/'.$brand_image)) : null" />
           @error('brand_image')
-            <div class="adm-err">Required, should be jpg, png or jpeg</div>
+            <div class="adm-err">{{ $message }}</div>
           @enderror
         </div>
         <div class="col-md-12">

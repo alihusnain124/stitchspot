@@ -121,13 +121,10 @@
                <label class="block font-body text-[10.5px] tracking-[2.5px] uppercase text-gray-400 mb-2">
                   Profile Photo <span class="text-gold">*</span>
                </label>
-               <label class="flex items-center gap-3 w-full h-11 px-4 border border-gray-200 bg-white cursor-pointer hover:border-[#1A1A1A] transition-colors">
-                  <i class="fa-solid fa-camera text-gray-400 text-sm"></i>
-                  <span id="image-label" class="font-body text-sm text-gray-400">Choose new photo…</span>
-                  <input type="file" name="image" id="image" accept="image/*"
-                     class="hidden"
-                     onchange="previewAvatar(this)">
-               </label>
+               {{-- Starts empty: the round avatar above already shows the current photo. --}}
+               <x-image-upload
+                  name="image" input-id="image" variant="front"
+                  :show-label="false" :max-mb="8" />
                <span class="font-body text-[11px] text-red-500 mt-1 block field_error" id="image_error"></span>
             </div>
 
@@ -178,16 +175,18 @@
 
 @section('scripts')
 <script>
-function previewAvatar(input) {
-   if (!ssValidateImageFile(input, 2)) return;
-   if (input.files && input.files[0]) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-         document.getElementById('avatar-preview').src = e.target.result;
-      };
-      reader.readAsDataURL(input.files[0]);
-      document.getElementById('image-label').textContent = input.files[0].name;
-   }
-}
+// Keep the page's avatar thumbnail in step with the uploader.
+document.addEventListener('image-upload:change', function (e) {
+   var img = document.getElementById('avatar-preview');
+   if (!img) return;
+
+   if (!img.dataset.original) img.dataset.original = img.src;
+
+   if (!e.detail.file) { img.src = img.dataset.original; return; }
+
+   var reader = new FileReader();
+   reader.onload = function (ev) { img.src = ev.target.result; };
+   reader.readAsDataURL(e.detail.file);
+});
 </script>
 @endsection

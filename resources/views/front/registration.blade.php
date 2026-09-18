@@ -260,12 +260,9 @@
                   <label class="block font-body text-[10px] tracking-[0.12em] uppercase text-gray-500 mb-1.5">
                      Profile Photo <span class="text-gold">*</span>
                   </label>
-                  <label class="flex items-center gap-3 w-full border border-gray-200 px-4 py-2.5 cursor-pointer hover:border-[#1A1A1A] transition-colors bg-white">
-                     <i class="fa-solid fa-camera text-gray-300 text-sm"></i>
-                     <span id="photo-label" class="font-body text-sm text-gray-400">Choose photo…</span>
-                     <input type="file" name="image" id="image" accept="image/*" class="hidden"
-                        onchange="if(ssValidateImageFile(this,2)) document.getElementById('photo-label').textContent = this.files[0]?.name || 'Choose photo…'">
-                  </label>
+                  <x-image-upload
+                     name="image" input-id="image" variant="front"
+                     :show-label="false" :max-mb="8" />
                   <span class="field_error" id="image_error"></span>
                </div>
 

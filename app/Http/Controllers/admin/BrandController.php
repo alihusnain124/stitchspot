@@ -3,11 +3,16 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\ImageUploadService;
 use App\Models\admin\Brand;
 use Illuminate\Http\Request;
 
 class BrandController extends Controller
 {
+    public function __construct(protected ImageUploadService $images)
+    {
+    }
+
     public function index()
     {
         $result['data']=Brand::paginate(10);
@@ -39,9 +44,9 @@ class BrandController extends Controller
     public function manage_brand_process(Request $req){
      
         if($req->post('id')>0){
-            $image_val='mimes:jpg,jpeg,png';
+            $image_val='image|mimes:jpg,jpeg,png,webp,gif|max:8192';
         }else{
-            $image_val='required|mimes:jpg,jpeg,png';
+            $image_val='required|image|mimes:jpg,jpeg,png,webp,gif|max:8192';
         }
        $req->validate([
           
@@ -61,20 +66,11 @@ class BrandController extends Controller
 
      
        if($req->hasfile('brand_image')){
-
-        if($req->post('id')!=''){
-            $image=DB::table('brands')->where(['id'=>$req->post('id')])->get();   
-            if(Storage::exists('public/media/brand/'.$image[0]->brand_image)){
-                Storage::delete('public/media/brand/'.$image[0]->brand_image);
-            }
-        }
-
-
-        $image=$req->file('brand_image');
-        $ext=$image->extension();
-        $image_name=time().'.'.$ext;
-        $image->storeAs('/public/media/brand',$image_name);
-        $data->brand_image=$image_name;     
+        $data->brand_image=$this->images->store(
+            $req->file('brand_image'),
+            'media/brand',
+            $req->post('id')!='' ? $data->getOriginal('brand_image') : null
+        );
        }
        
     //    echo '<pre>';

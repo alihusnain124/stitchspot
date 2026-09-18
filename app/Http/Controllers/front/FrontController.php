@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\front;
 use App\Http\Controllers\Controller;
+use App\Services\ImageUploadService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,10 @@ use Carbon\Carbon;
 
 class FrontController extends Controller
 {
+    public function __construct(protected ImageUploadService $images)
+    {
+    }
+
 
 
     //  public function updatepassword(){
@@ -219,7 +224,7 @@ class FrontController extends Controller
         $validator = Validator::make($req->all(), [
             'name' => 'required|unique:customers,name,' . $req->post('id'),
             'email' => 'required|email|unique:customers,email,' . $req->post('id'),
-            'image' => 'required',
+            'image' => ($req->post('id') ? 'nullable' : 'required').'|image|mimes:jpeg,jpg,png,webp,gif|max:8192',
             'mobile' => 'required',
             'password' => [
                 'required',
@@ -238,12 +243,14 @@ class FrontController extends Controller
          return response()->json(['error'=>$validator->errors()->toArray()]);
       }else{
 
+        $image_name=null;
+
         if($req->hasFile('image')){
-    
-            $image=$req->file('image');
-            $ext=$image->extension();
-            $image_name=time().'.'.$ext;
-            $image->storeAs('public/media/customer/',$image_name);          
+            $existing=$req->post('id')
+                ? DB::table('customers')->where('id',$req->post('id'))->value('image')
+                : null;
+
+            $image_name=$this->images->store($req->file('image'),'media/customer',$existing);
            }
       
       
@@ -259,11 +266,15 @@ class FrontController extends Controller
             'about'=>$about,
             'language'=>$language,
             'tailor'=>$tailor,
-            'image'=>$image_name,
             'status'=>1,
             'created_at'=>date('Y-m-d H:i:s'),
             'updated_at'=>date('Y-m-d H:i:s')
         ];
+
+        // Leave the stored image untouched when the form is submitted without a new one.
+        if($image_name!==null){
+            $data['image']=$image_name;
+        }
 
         if($req->post('id')){
 
@@ -1482,20 +1493,13 @@ public function edit_service_process(Request $req,$id){
     ];
 
     if($req->hasfile('image')){
-        $image=$req->file('image');
+        $req->validate(['image'=>'image|mimes:jpeg,jpg,png,webp,gif|max:8192']);
 
-        if($image->getSize() > 2 * 1024 * 1024){
-            return redirect()->back()->with('error','Image must be under 2MB.');
-        }
-
-        if($service->image!='' && Storage::exists('public/media/services/'.$service->image)){
-            Storage::delete('public/media/services/'.$service->image);
-        }
-
-        $ext=$image->extension();
-        $image_name=time().'.'.$ext;
-        $image->storeAs('/public/media/services/',$image_name);
-        $data['image']=$image_name;
+        $data['image']=$this->images->store(
+            $req->file('image'),
+            'media/services',
+            $service->image ?: null
+        );
     }
 
     DB::table('services')->where('id',$id)->update($data);
@@ -1531,17 +1535,9 @@ public function add_service(Request $req){
 
   $image_name = '';
   if($req->hasfile('image')){
+    $req->validate(['image'=>'image|mimes:jpeg,jpg,png,webp,gif|max:8192']);
 
-    $image=$req->file('image');
-
-    if($image->getSize() > 2 * 1024 * 1024){
-        return redirect()->back()->with('error','Image must be under 2MB.');
-    }
-
-    $ext=$image->extension();
-    $image_name=time().'.'.$ext;
-    $image->storeAs('/public/media/services/',$image_name);
-
+    $image_name=$this->images->store($req->file('image'),'media/services');
    }
 
 

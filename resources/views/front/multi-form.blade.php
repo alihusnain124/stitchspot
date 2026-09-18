@@ -278,25 +278,12 @@
                {{ isset($service) ? "Upload a new photo to replace the current one, or leave this blank to keep it." : 'Add a cover image for your service listing.' }}
             </p>
 
-            <div class="mb-5" id="photo-preview-wrap" style="{{ (isset($service) && $service->image) ? '' : 'display:none' }}">
-               <p class="font-body text-[10.5px] tracking-[2px] uppercase text-gray-400 mb-2" id="photo-preview-label">Current Photo</p>
-               <img id="photo-preview-img"
-                    src="{{ (isset($service) && $service->image) ? asset('/storage/media/services/'.$service->image) : '' }}"
-                    alt="Service photo preview"
-                    class="w-full object-cover border border-gray-100" style="aspect-ratio:4/3;max-width:280px">
-            </div>
-
             <div class="experiences-group">
                <div class="experience-item">
-                  <label class="block w-full border-2 border-dashed border-gray-200 hover:border-[#C9A96E] transition-colors cursor-pointer p-10 text-center"
-                         id="drop-zone">
-                     <i class="fa-solid fa-cloud-arrow-up text-[40px] text-gray-300 mb-3 block"></i>
-                     <p class="font-body text-[13px] text-gray-400 mb-1">Click to upload or drag &amp; drop</p>
-                     <p class="font-body text-[11px] text-gray-300">JPG, PNG, WEBP — max 2MB, recommended 800×600px</p>
-                     <p id="file-name" class="font-body text-[12px] text-[#C9A96E] mt-3 hidden"></p>
-                     <input type="file" name="image" accept="image/*" class="hidden" id="service-image-input"
-                        onchange="handleServiceImageChange(this)">
-                  </label>
+                  <x-image-upload
+                     name="image" input-id="service-image-input" variant="front"
+                     :show-label="false" :max-mb="8"
+                     :value="(isset($service) && $service->image) ? asset('/storage/media/services/'.$service->image) : null" />
                </div>
             </div>
 
@@ -361,23 +348,6 @@
 
 @section('scripts')
 <script>
-function handleServiceImageChange(input) {
-   if (!ssValidateImageFile(input, 2)) return;
-
-   const file = input.files && input.files[0];
-   document.getElementById('file-name').textContent = file ? file.name : '';
-   document.getElementById('file-name').classList.remove('hidden');
-
-   if (file) {
-      const previewWrap  = document.getElementById('photo-preview-wrap');
-      const previewImg    = document.getElementById('photo-preview-img');
-      const previewLabel  = document.getElementById('photo-preview-label');
-      previewImg.src = URL.createObjectURL(file);
-      previewLabel.textContent = 'New Photo (not yet saved)';
-      previewWrap.style.display = '';
-   }
-}
-
 /* ── Tag chip system ── */
 const MAX_TAGS = 5;
 let tags = @json($existingTags);

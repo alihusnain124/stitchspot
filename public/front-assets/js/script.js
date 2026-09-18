@@ -1,7 +1,7 @@
 /* Shared image-upload guard: rejects non-images and files over the size limit.
    Call from any <input type="file"> onchange before doing anything else with it. */
 function ssValidateImageFile(input, maxMB) {
-    maxMB = maxMB || 2;
+    maxMB = maxMB || 8;
     var file = input.files && input.files[0];
     if (!file) return true;
 

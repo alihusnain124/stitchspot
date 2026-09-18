@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
+use App\Services\ImageUploadService;
 
 use App\Models\admin\Product;
 use Illuminate\Http\Request;
@@ -10,6 +11,10 @@ use Storage;
 
 class ProductController extends Controller
 {
+    public function __construct(protected ImageUploadService $images)
+    {
+    }
+
     public function index()
     {
         $result['data']=Product::paginate(10);
@@ -93,16 +98,16 @@ class ProductController extends Controller
         // die;
         
         if($req->post('id')>0){
-            $image_val='mimes:jpg,jpeg,png';
+            $image_val='image|mimes:jpg,jpeg,png,webp,gif|max:8192';
         }else{
-            $image_val='required|mimes:jpg,jpeg,png';
+            $image_val='required|image|mimes:jpg,jpeg,png,webp,gif|max:8192';
         }
        $req->validate([
         'name'=>'required',
         'image'=> $image_val,
         //'slug'=>'required|unique:products,slug,'.$req->post('id'),
         // 'sku.*'=>'required|unique:products_attr,sku'.$req->post('paid'),
-        'attr_image.*'=>'mimes:jpg,jpeg,png,jfif',
+        'attr_image.*'=>'image|mimes:jpg,jpeg,png,webp,gif|max:8192',
        
      
        ]);
@@ -148,19 +153,11 @@ class ProductController extends Controller
         $msg='Product Inserted';
        }
        if($req->hasfile('image')){
-        if($req->post('id')>0){
-        $image=DB::table('products')->where(['id'=>$req->post('id')])->get();   
-        if(Storage::exists('public/media/'.$image[0]->image)){
-            Storage::delete('public/media/'.$image[0]->image);
-        }
-    }
-
-          
-        $image=$req->file('image');
-        $ext=$image->extension();
-        $image_name=time().'.'.$ext;
-        $image->storeAs('/public/media',$image_name);
-        $data->image=$image_name;     
+        $data->image=$this->images->store(
+            $req->file('image'),
+            'media',
+            $req->post('id')>0 ? $data->getOriginal('image') : null
+        );
        }
       
        $data->category_id=$req->post('category_id');      
@@ -199,20 +196,19 @@ class ProductController extends Controller
            ////product_attr image
         if($req->hasfile("attr_image.$key")){
 
+            $existingAttrImage=null;
+
             if($paidarr[$key]!=''){
-                $image=DB::table('products_attr')->where(['id'=>$paidarr[$key]])->get();   
-                if(Storage::exists('public/media/'.$image[0]->attr_image)){
-                    Storage::delete('public/media/'.$image[0]->attr_image);
-                }
+                $existing=DB::table('products_attr')->where(['id'=>$paidarr[$key]])->first();
+                $existingAttrImage=$existing->attr_image ?? null;
             }
 
 
-            $rand=rand('111111111','999999999');
-            $attr_image=$req->file("attr_image.$key");
-            $ext=$attr_image->extension();
-            $attr_image_name= $rand.'.'.$ext;
-            $req->file("attr_image.$key")->storeAs('/public/media',$attr_image_name);
-            $productAttrArr['attr_image']=$attr_image_name;  
+            $productAttrArr['attr_image']=$this->images->store(
+                $req->file("attr_image.$key"),
+                'media',
+                $existingAttrImage
+            );  
            
 
             if($paidarr[$key]!=''){

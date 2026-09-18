@@ -52,13 +52,13 @@ $checked = '';
           </select>
         </div>
         <div class="col-md-12">
-          <label class="adm-label">Category Image</label>
-          <input id="category_image" name="category_image" type="file" class="adm-input" {{$image_req}}>
-          @if ($category_image != '')
-            <img class="mt-2" width="80px" src="{{asset('/storage/media/category/'.$category_image)}}" alt="">
-          @endif
+          <x-image-upload
+            name="category_image"
+            label="Category Image"
+            :required="$image_req == 'required'"
+            :value="$category_image != '' ? asset('/storage/media/category/'.$category_image) : null" />
           @error('category_image')
-            <div class="adm-err">Required, should be jpg, png or jpeg</div>
+            <div class="adm-err">{{ $message }}</div>
           @enderror
         </div>
         <div class="col-md-12">
