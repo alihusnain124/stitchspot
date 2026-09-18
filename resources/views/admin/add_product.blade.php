@@ -45,13 +45,13 @@ else $image_req = 'required';
           @enderror
         </div>
         <div class="col-md-12">
-          <label class="adm-label">Product Image</label>
-          <input id="image" name="image" type="file" class="adm-input" {{$image_req}}>
-          @if ($image != '')
-            <img class="mt-2" width="80px" src="{{ str_starts_with($image, 'http') ? $image : asset('/storage/media/'.$image) }}" alt="">
-          @endif
+          <x-image-upload
+            name="image"
+            label="Product Image"
+            :required="$image_req == 'required'"
+            :value="$image != '' ? (str_starts_with($image, 'http') ? $image : asset('/storage/media/'.$image)) : null" />
           @error('image')
-            <div class="adm-err">Required, should be jpg, png or jpeg</div>
+            <div class="adm-err">{{ $message }}</div>
           @enderror
         </div>
         <div class="col-md-4">
@@ -164,13 +164,12 @@ else $image_req = 'required';
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="adm-label">Variant Image</label>
-                <input name="attr_image[]" type="file" class="adm-input" {{$image_req}}>
-                @if ($pAArr['attr_image'] != '')
-                  <img class="mt-2" width="70px" src="{{ str_starts_with($pAArr['attr_image'], 'http') ? $pAArr['attr_image'] : asset('/storage/media/'.$pAArr['attr_image']) }}" alt="">
-                @endif
+                <x-image-upload
+                  name="attr_image[]"
+                  label="Variant Image"
+                  :value="$pAArr['attr_image'] != '' ? (str_starts_with($pAArr['attr_image'], 'http') ? $pAArr['attr_image'] : asset('/storage/media/'.$pAArr['attr_image'])) : null" />
                 @error('attr_image.*')
-                  <div class="adm-err">Required, should be jpg, png or jpeg</div>
+                  <div class="adm-err">{{ $message }}</div>
                 @enderror
               </div>
               <div class="col-md-6" style="display:flex;align-items:flex-end;">
@@ -214,13 +213,23 @@ else $image_req = 'required';
     html += '<div class="col-md-3"><label class="adm-label">Qty</label><input name="qty[]" type="text" class="adm-input"></div>';
     html += '<div class="col-md-6"><label class="adm-label">Size</label><select name="size_id[]" class="adm-select"><option value="">Select Size</option>@foreach ($size as $item)<option value="{{$item->id}}">{{$item->size}}</option>@endforeach</select></div>';
     html += '<div class="col-md-6"><label class="adm-label">Color</label><select name="color_id[]" class="adm-select"><option value="">Select Color</option>@foreach ($color as $item)<option value="{{$item->id}}">{{$item->color}}</option>@endforeach</select></div>';
-    html += '<div class="col-md-6"><label class="adm-label">Variant Image</label><input name="attr_image[]" type="file" class="adm-input" {{$image_req}}></div>';
+    html += '<div class="col-md-6" data-attr-image-slot></div>';
     html += '<div class="col-md-6" style="display:flex;align-items:flex-end;"><button type="button" onclick="remove_more('+loop_count+')" class="btn-adm btn-adm-red"><i class="fa-solid fa-trash"></i> Remove</button></div>';
     html += '</div></div>';
     jQuery('#product_attr').append(html);
+    // Fill the placeholder with a real uploader cloned from the template below.
+    var slot = jQuery('#product_count_'+loop_count).find('[data-attr-image-slot]').last();
+    slot.html(jQuery('#attr-image-template').html());
+    window.ssWireImageUploads && window.ssWireImageUploads();
   }
   function remove_more(loop_count){
     jQuery('#product_count_'+loop_count).remove();
   }
 </script>
 @endsection
+
+
+{{-- Cloned by add_more() for each new variant row. --}}
+<template id="attr-image-template">
+  <x-image-upload name="attr_image[]" label="Variant Image" />
+</template>

@@ -4,7 +4,7 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta name="csrf-token" content="{{ csrf_token() }}">
-   <title>Sign In – StitchSpot</title>
+   <title>@yield('title') – StitchSpot</title>
 
    {{-- Fonts --}}
    <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,123 +85,67 @@
          </div>
       </div>
 
-      {{-- ── RIGHT: Form panel ──────────────────────── --}}
+
       <div class="flex-1 flex flex-col justify-center px-8 lg:px-14 py-12">
          <div class="w-full max-w-sm mx-auto">
 
-            {{-- Back link --}}
-            <a href="{{ url('/') }}" class="inline-flex items-center gap-2 font-body text-[11px] tracking-[0.18em] uppercase text-gray-400 hover:text-[#1A1A1A] mb-10 transition-colors">
-               <i class="fa-solid fa-arrow-left text-[9px]"></i> Back to Store
+            <a href="{{ url('/login') }}" class="inline-flex items-center gap-2 font-body text-[11px] tracking-[0.18em] uppercase text-gray-400 hover:text-[#1A1A1A] mb-10 transition-colors">
+               <i class="fa-solid fa-arrow-left text-[9px]"></i> Back to Sign In
             </a>
 
-            {{-- Logo --}}
             <div class="mb-9">
                <span class="font-display text-[28px] font-semibold text-[#1A1A1A]">
                   Stitch<span class="text-gold">Spot</span>
                </span>
             </div>
 
-            {{-- Heading --}}
-            <h1 class="font-display text-[38px] font-semibold text-[#1A1A1A] leading-none mb-2">Welcome Back</h1>
-            <p class="font-body text-sm text-gray-400 mb-9">Sign in to your account to continue.</p>
+            <h1 class="font-display text-[38px] font-semibold text-[#1A1A1A] leading-none mb-2">@yield('heading')</h1>
+            <p class="font-body text-sm text-gray-400 mb-9">@yield('subheading')</p>
 
-            {{-- Form --}}
-            <form id="login_form" class="space-y-5">
-               @csrf
-
-               {{-- Email --}}
-               <div>
-                  <label class="block font-body text-[10px] tracking-[0.15em] uppercase text-gray-500 mb-2">Email</label>
-                  <input type="email" name="login_email" placeholder="you@example.com"
-                     class="w-full border border-gray-300 px-4 py-3 font-body text-sm text-[#1A1A1A] placeholder-gray-300 focus:border-[#1A1A1A] transition-colors bg-white"
-                     required>
-               </div>
-
-               {{-- Password --}}
-               <div>
-                  <div class="flex items-center justify-between mb-2">
-                     <label class="font-body text-[10px] tracking-[0.15em] uppercase text-gray-500">Password</label>
-                     <a href="{{ route('password.request') }}" class="font-body text-[11px] text-gray-400 hover:text-[#1A1A1A] underline underline-offset-2 transition-colors">Forgot password?</a>
-                  </div>
-                  <div class="relative">
-                     <input type="password" name="login_password" id="login_password" placeholder="••••••••"
-                        class="w-full border border-gray-300 px-4 py-3 pr-11 font-body text-sm text-[#1A1A1A] placeholder-gray-300 focus:border-[#1A1A1A] transition-colors bg-white"
-                        required>
-                     <button type="button" onclick="togglePwd('login_password', this)"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1A1A1A] transition-colors bg-transparent border-none cursor-pointer p-0.5">
-                        <i class="fa-regular fa-eye text-[14px]"></i>
-                     </button>
-                  </div>
-               </div>
-
-               {{-- Error message --}}
-               <div class="login_error font-body text-sm text-red-500 text-center min-h-[20px]"></div>
-
-               {{-- Submit --}}
-               <button type="submit" id="login_btn"
-                  class="w-full bg-[#1A1A1A] text-white font-body text-[11px] tracking-[0.22em] uppercase py-[15px] hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 border-none cursor-pointer">
-                  Sign In &nbsp;<i class="fa-solid fa-arrow-right text-[9px]"></i>
-               </button>
-            </form>
-
-            {{-- Divider --}}
-            <div class="my-7 flex items-center gap-4">
-               <div class="flex-1 border-t border-gray-200"></div>
-               <span class="font-body text-[11px] text-gray-400">or</span>
-               <div class="flex-1 border-t border-gray-200"></div>
-            </div>
-
-            {{-- Register link --}}
-            <p class="font-body text-center text-[13px] text-gray-400">
-               Don't have an account?
-               <a href="{{ url('/registration') }}" class="text-[#1A1A1A] font-medium underline underline-offset-2 hover:text-gold transition-colors">Create Account</a>
-            </p>
+            @yield('form')
 
          </div>
       </div>
 
    </div>
 
+   {{-- Feedback goes through the same toast used across the rest of the site. --}}
    <script>
-      function togglePwd(id, btn) {
-         const input = document.getElementById(id);
-         const icon  = btn.querySelector('i');
-         if (input.type === 'password') {
-            input.type = 'text';
-            icon.className = 'fa-regular fa-eye-slash text-[14px]';
-         } else {
-            input.type = 'password';
-            icon.className = 'fa-regular fa-eye text-[14px]';
-         }
-      }
+      (function () {
+         var status = @json(session('status'));
+         // $errors is shared by the `web` middleware group; guard it so rendering
+         // this view outside that group cannot hard-fail the page.
+         var errors = @json(isset($errors) ? $errors->all() : []);
 
-      @if (session('status'))
-         SS.toast('success', @json(session('status_title', 'Success')), @json(session('status')), 6000);
-      @endif
+         var title  = @json(session('status_title', 'Success'));
 
-      jQuery('#login_form').submit(function(e) {
-         e.preventDefault();
-         jQuery('.login_error').html('');
-         const btn = jQuery('#login_btn');
-         btn.html('<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; Signing in…').prop('disabled', true);
+         if (status) SS.toast('success', title, status, 6000);
 
-         jQuery.ajax({
-            url:  '/login_process',
-            data: jQuery('#login_form').serialize(),
-            type: 'post',
-            success: function(result) {
-               if (result.error) {
-                  SS.toast('warning', 'Oops…', result.error);
-                  btn.html('Sign In &nbsp;<i class="fa-solid fa-arrow-right text-[9px]"></i>').prop('disabled', false);
-               } else {
-                  SS.toast('success', 'Welcome back!', result.msg, 1500);
-                  setTimeout(() => { window.location.href = '/'; }, 1600);
+         errors.forEach(function (msg, i) {
+            setTimeout(function () { SS.toast('error', 'Please check', msg); }, i * 220);
+         });
+      })();
+
+      // Same button loader the sign-in and registration forms use, so a slow mail
+      // send doesn't look like nothing happened and a second click can't fire a
+      // second request. The wording comes from the form's data-loading-text.
+      jQuery(function ($) {
+         $('form[data-loading-text]').each(function () {
+            var form = $(this),
+                btn  = form.find('button[type="submit"]').first(),
+                original = btn.html();
+
+            form.submit(function () {
+               btn.html('<i class="fa-solid fa-spinner fa-spin"></i>&nbsp; ' + form.data('loading-text'))
+                  .prop('disabled', true);
+            });
+
+            // Restore if the browser returns here from its back/forward cache.
+            $(window).on('pageshow', function (e) {
+               if (e.originalEvent && e.originalEvent.persisted) {
+                  btn.html(original).prop('disabled', false);
                }
-            },
-            error: function() {
-               btn.html('Sign In &nbsp;<i class="fa-solid fa-arrow-right text-[9px]"></i>').prop('disabled', false);
-               jQuery('.login_error').html('Something went wrong. Please try again.');
-            }
+            });
          });
       });
    </script>

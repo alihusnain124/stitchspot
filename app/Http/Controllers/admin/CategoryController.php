@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
+use App\Services\ImageUploadService;
 
 use App\Models\admin\Category;
 use Illuminate\Http\Request;
@@ -11,6 +12,10 @@ use Storage;
 
 class CategoryController extends Controller
 {
+    public function __construct(protected ImageUploadService $images)
+    {
+    }
+
     public function index()
     {
         $result['data']=Category::paginate(10);
@@ -53,9 +58,9 @@ class CategoryController extends Controller
 
       
         if($req->post('id')>0){
-            $image_val='mimes:jpg,jpeg,png';
+            $image_val='image|mimes:jpg,jpeg,png,webp,gif|max:8192';
         }else{
-            $image_val='required|mimes:jpg,jpeg,png';
+            $image_val='required|image|mimes:jpg,jpeg,png,webp,gif|max:8192';
         }
        $req->validate([
         'category_name'=>'required',
@@ -71,21 +76,11 @@ class CategoryController extends Controller
        }
 
        if($req->hasfile('category_image')){
-
-        // if($req->post('id')!=''){
-        //     $image=DB::table('categories')->where(['id'=>$req->post('id')])->get();   
-        //     if(Storage::exists('public/media/category/'.$image[0]->category_image)){
-        //         Storage::delete('public/media/category/'.$image[0]->category_image);
-        //     }
-        // }
-
-
-        $image=$req->file('category_image');
-        $ext=$image->extension();
-        $image_name=time().'.'.$ext;
-      
-        $image->storeAs('/public/media/category',$image_name);
-        $data->category_image=$image_name;     
+        $data->category_image=$this->images->store(
+            $req->file('category_image'),
+            'media/category',
+            $req->post('id')>0 ? $data->getOriginal('category_image') : null
+        );
        }
       
       

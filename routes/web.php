@@ -16,6 +16,7 @@ use  App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\HomeBannerController;
 
 use  App\Http\Controllers\front\FrontController;
+use  App\Http\Controllers\front\ForgotPasswordController;
 use  App\Http\Controllers\front\StripePaymentController;
 use  App\Http\Controllers\front\MessageController;
 /*
@@ -40,6 +41,12 @@ use  App\Http\Controllers\front\MessageController;
   Route::post('/registration_process',[FrontController::class,'registration_process']);
   Route::get('/login',[FrontController::class,'login'])->name('login');
   Route::post('/login_process',[FrontController::class,'login_process']);
+
+  // Password reset for storefront customers.
+  Route::get('/forgot-password',[ForgotPasswordController::class,'showRequestForm'])->name('password.request');
+  Route::post('/forgot-password',[ForgotPasswordController::class,'sendResetLink'])->name('password.email');
+  Route::get('/reset-password/{token}',[ForgotPasswordController::class,'showResetForm'])->name('password.reset');
+  Route::post('/reset-password',[ForgotPasswordController::class,'reset'])->name('password.update');
   Route::get('/profile/{id}',[FrontController::class,'profile']);
   Route::get('/products',[FrontController::class,'products']);
   Route::get('/products/more',[FrontController::class,'products_more']);
